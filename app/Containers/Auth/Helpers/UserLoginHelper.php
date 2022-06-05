@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Helpers\User;
+namespace App\Containers\Auth\Helpers;
 
-use App\Helpers\User\UserTokenHelper;
+use App\Containers\Auth\Helpers\UserTokenHelper;
 
 class UserLoginHelper
 {

@@ -23,6 +23,8 @@ trait ResponseHelper
             return ResponseJsonErrorReturn::returnErrorResponse($status, $message, $error);
         }
 
+        $data['status'] = 'success';
+
         if($message != null) {
             $data['message'] = $message;
         }

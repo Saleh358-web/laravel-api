@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helpers\User;
+namespace App\Containers\Users\Helpers;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
