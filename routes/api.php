@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\PassportAuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,5 +14,4 @@ use App\Http\Controllers\Auth\PassportAuthController;
 |
 */
 
-Route::post('register', [PassportAuthController::class, 'register']);
-Route::post('login', [PassportAuthController::class, 'login']);
+require_once __DIR__ . '/login/login-logout.php';

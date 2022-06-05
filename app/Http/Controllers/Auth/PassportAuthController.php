@@ -15,33 +15,6 @@ class PassportAuthController extends Controller
     use UserValidator, ResponseHelper;
     
     /**
-     * Registration
-     */
-    public function register(Request $request)
-    {
-        try {
-            $user_data = $request->all();
-
-            // returns json error to F.E. if failed
-            $this->create_validator($user_data)->validate();
-    
-            $user = UserCreateHelper::create($user_data);
-        
-            $token = UserTokenHelper::create_token($user);
-
-            return $this->return_response(
-                200,
-                ['user' => $user, 'token' => $token],
-                'User created successfully'
-            );
-        } catch (Exception $e) {
-            return $this->return_response(405, 'Unable to create user', $e->getMessage());
-        }
-
-        return $this->return_response(405, 'Unable to create user');
-    }
- 
-    /**
      * Login
      */
     public function login(Request $request)
