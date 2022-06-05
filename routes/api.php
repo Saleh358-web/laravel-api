@@ -14,4 +14,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-require_once __DIR__ . '/login/login-logout.php';
+require_once __DIR__ . '/auth/auth.php';
