@@ -13,3 +13,4 @@ use Illuminate\Support\Facades\Route;
 */
 
 require_once __DIR__ . '/Auth/routes.php';
+require_once __DIR__ . '/Users/routes.php';
