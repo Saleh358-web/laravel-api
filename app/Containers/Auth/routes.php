@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 use App\Containers\Auth\Controllers\PassportAuthController;
 
 Route::post('login', [PassportAuthController::class, 'login']);

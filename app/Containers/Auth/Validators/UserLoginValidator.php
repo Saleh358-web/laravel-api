@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Containers\Auth\Helpers;
+namespace App\Containers\Auth\Validators;
 
 use Illuminate\Support\Facades\Validator;
 

@@ -2,7 +2,7 @@
 
 namespace App\Helpers\Response;
 
-use App\Helpers\ResponseJsonErrorReturn;
+use App\Helpers\Response\ResponseJsonErrorReturn;
 
 trait ResponseHelper
 {

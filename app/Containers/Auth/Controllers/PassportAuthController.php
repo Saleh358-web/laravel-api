@@ -4,10 +4,11 @@ namespace App\Containers\Auth\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Containers\Auth\Helpers\UserLoginValidator;
+use App\Containers\Auth\Validators\UserLoginValidator;
 use App\Containers\Auth\Helpers\UserTokenHelper;
 use App\Helpers\Response\ResponseHelper;
 use App\Containers\Auth\Helpers\UserLoginHelper;
+use Exception;
 
 class PassportAuthController extends Controller
 {
@@ -30,7 +31,7 @@ class PassportAuthController extends Controller
             $info = UserLoginHelper::login($user_data);
             
             if($info == null) {
-                return $this->return_response(401, 'Unable to login user');
+                return $this->return_response(401, [], 'Unable to login user');
             }
         
             return $this->return_response(

@@ -16,7 +16,7 @@ class ResponseJsonErrorReturn
      */
     public static function returnErrorResponse(int $status, string $message = null, string $error = null)
     {
-        $result = JsonErrorReturnTrait::fillResult($status, $message, $error);
+        $result = ResponseJsonErrorReturn::fillResult($status, $message, $error);
 
         return response()->json($result, $status);
     }
