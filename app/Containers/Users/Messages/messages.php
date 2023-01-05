@@ -9,8 +9,11 @@ trait Messages
         return [
             'profile' => [
                 'get' => 'Returned Profile',
-                'error' => 'Unable to get user profile'
-            ]
+                'get_error' => 'Unable to get user profile',
+                'update_error' => 'User profile update failed',
+                'update' => 'User profile updated successfully'
+            ],
+            'email_exists' => 'Email already exists'
         ];
     }
 }
