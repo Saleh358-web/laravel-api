@@ -5,6 +5,10 @@ namespace App\Containers\Users\Helpers;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use App\Containers\Users\Exceptions\UpdateUserFailedException;
+use App\Containers\Users\Exceptions\DuplicateEmailException;
+use App\Containers\Users\Exceptions\CreateUserFailedException;
+use Exception;
 
 class UserHelper
 {
@@ -12,7 +16,7 @@ class UserHelper
      * create user
      * 
      * @param  array $data
-     * @return StatusArray [ 'status' => boolean, '{any}' => {any} ]
+     * @return User | CreateUserFailedException | Exception
      */
     public static function create(array $data)
     {
@@ -29,23 +33,14 @@ class UserHelper
 
             DB::commit();
             
-            return [
-                'status' => true,
-                'user' => $user
-            ];
+            return $user;
         } catch (\Exception $e) {
             DB::rollback();
-            return [
-                'status' => false,
-                'case' => 'create_failed'
-            ];
+            throw $e;
         }
 
         DB::rollback();
-        return [
-            'status' => false,
-            'case' => 'create_failed'
-        ];
+        throw new CreateUserFailedException();
     }
     
      /**
@@ -53,7 +48,7 @@ class UserHelper
      * 
      * @param  User $user
      * @param  array $data
-     * @return StatusArray [ 'status' => '', 'case' => '' ]
+     * @return User | DuplicateEmailException | UpdateUserFailedException
      */
     public static function update(User $user, array $data)
     {
@@ -68,10 +63,7 @@ class UserHelper
                 $emailCount = User::where('email',  $data['email'])->count();
                 if($emailCount) {
                     // New Email exists
-                    return [
-                        'status' => false,
-                        'case' => 'email_exists'
-                    ];
+                    throw new DuplicateEmailException();
                 }
 
                 $user->email = $data['email'];
@@ -82,23 +74,14 @@ class UserHelper
             DB::commit();
             
             $user = User::find($user->id);
-            return [
-                'status' => true,
-                'user' => $user
-            ];
+            return $user;
         } catch (\Exception $e) {
             DB::rollback();
-            return [
-                'status' => false,
-                'case' => 'update_failed'
-            ];
+            throw $e;
         }
 
         DB::rollback();
-        return [
-            'status' => false,
-            'case' => 'update_failed'
-        ];
+        throw new UpdateUserFailedException();
     }
 
     public static function trimUserData(array $data)

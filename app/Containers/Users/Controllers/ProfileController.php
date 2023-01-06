@@ -8,6 +8,7 @@ use App\Containers\Users\Messages\Messages;
 use App\Containers\Users\Validators\ProfileValidators;
 use App\Helpers\Response\ResponseHelper;
 use App\Containers\Users\Helpers\UserHelper;
+use Exception;
 use Auth;
 
 class ProfileController extends Controller
@@ -57,21 +58,13 @@ class ProfileController extends Controller
             $user = Auth::user();
             $updateUser = UserHelper::update($user, $data);
 
-            if(!$updateUser['status']) {
-                if($updateUser['case'] == 'email_exists') {
-                    return $this->return_response(405, [], $messages['email_exists']);
-                } else {
-                    throw new \Exception($messages['profile']['update_error']);
-                }
-            }
-
             return $this->return_response(
                 200,
-                [$updateUser['user']],
+                [$updateUser],
                 $messages['profile']['update']
             );
-        } catch (\Exception $e) {
-            return $this->return_response(405, [], $messages['profile']['update_error'], $e->getMessage());
+        } catch (Exception $e) {
+            return $this->return_response(405, [], $messages['profile']['update_error'], $e->error());
         }
 
         return $this->return_response(405, [], $messages['profile']['update_error']);
