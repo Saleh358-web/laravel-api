@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Containers\Users\Controllers\ProfileController;
 
 Route::group([
+    'prefix' => 'v1',
     'middleware' => ['auth:api']
 ], function ()
 {

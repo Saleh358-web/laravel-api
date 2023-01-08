@@ -57,15 +57,9 @@ class PassportAuthController extends Controller
         try {
             UserTokenHelper::revoke_token_for_user(auth()->user()->token(), $request->user());
             
-
-            $data = [
-                'status' => 'success',
-                'message' => 'Logout complete!'
-            ];
-
             return $this->return_response(
                 200,
-                $data,
+                [],
                 'User logged out successfully'
             );
         } catch (Exception $e) {

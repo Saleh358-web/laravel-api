@@ -3,7 +3,7 @@
 namespace Tests;
 
 use Illuminate\Contracts\Console\Kernel;
-use Artisan;
+use Illuminate\Support\Facades\Artisan as Artisan;
 
 trait TestDatabaseTrait
 {

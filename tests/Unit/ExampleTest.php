@@ -2,10 +2,19 @@
 
 namespace Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
+use Tests\TestDatabaseTrait;
+use Tests\TestCase;;
 
 class ExampleTest extends TestCase
 {
+    use TestDatabaseTrait;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // $this->manageDatabase();
+    }
+    
     /**
      * A basic test example.
      *

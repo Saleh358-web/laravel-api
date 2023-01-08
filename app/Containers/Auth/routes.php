@@ -5,9 +5,10 @@ use Illuminate\Support\Facades\Route;
 
 use App\Containers\Auth\Controllers\PassportAuthController;
 
-Route::post('login', [PassportAuthController::class, 'login'])->name('login');
+Route::post('v1/login', [PassportAuthController::class, 'login'])->name('login');
 
 Route::group([
+    'prefix' => 'v1',
     'middleware' => ['auth:api']
 ], function ()
 {
