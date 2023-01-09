@@ -4,9 +4,20 @@ namespace  App\Containers\Auth\Tests;
 
 use Tests\TestDatabaseTrait;
 use Tests\TestCase;
+use App\Containers\Users\Helpers\UserHelper;
+use Illuminate\Support\Str;
 
 class PassportAuthControllerTest extends TestCase
 {
+    private function createUser()
+    {
+        return UserHelper::create([
+            'first_name' => 'Name',
+            'last_name' => 'Name',
+            'email' => Str::random(5) . '@example.com',
+            'password' => 'password',
+        ]);
+    }
     /**
      * Test successful login.
      *
@@ -14,9 +25,11 @@ class PassportAuthControllerTest extends TestCase
      */
     public function test_login_successful()
     {
+        $user = $this->createUser();
+
         $body = [
-            'email' => 'admin@example.com',
-            'password' => 'admin123456'
+            'email' => $user->email,
+            'password' => 'password'
         ];
 
         $response = $this->json('POST', '/api/v1/login', $body, ['Accept' => 'application/json']);
@@ -40,15 +53,40 @@ class PassportAuthControllerTest extends TestCase
     }
 
     /**
+     * Test fail login.
+     *
+     * @return void
+     */
+    public function test_login_fail()
+    {
+        $user = $this->createUser();
+
+        $body = [
+            'email' => $user->email,
+            'password' => 'wrong_password'
+        ];
+
+        $response = $this->json('POST', '/api/v1/login', $body, ['Accept' => 'application/json']);
+
+        $response->assertStatus(401)->assertJsonStructure([
+             'status',
+             'message',
+             'error'
+         ]);
+    }
+
+    /**
      * Test successful logout.
      *
      * @return void
      */
     public function test_logout_successful()
     {
+        $user = $this->createUser();
+
         $body = [
-            'email' => 'admin@example.com',
-            'password' => 'admin123456'
+            'email' => $user->email,
+            'password' => 'password'
         ];
 
         $response = $this->json('POST', '/api/v1/login', $body, ['Accept' => 'application/json']);
@@ -63,6 +101,34 @@ class PassportAuthControllerTest extends TestCase
         ])->assertStatus(200)->assertJsonStructure([
             'status',
             'message'
+        ]);
+    }
+
+    /**
+     * Test fail logout.
+     *
+     * @return void
+     */
+    public function test_logout_fail()
+    {
+        $user = $this->createUser();
+
+        $body = [
+            'email' => $user->email,
+            'password' => 'password'
+        ];
+
+        $response = $this->json('POST', '/api/v1/login', $body, ['Accept' => 'application/json']);
+
+        $response->assertStatus(200);
+
+        $content = json_decode($response->getContent());
+
+        $response = $this->json('POST', '/api/v1/logout', [], [
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . 'wrong_token',
+        ])->assertStatus(401)->assertJsonStructure([
+            'message',
         ]);
     }
 }

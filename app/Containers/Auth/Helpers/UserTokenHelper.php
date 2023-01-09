@@ -18,6 +18,8 @@ class UserTokenHelper
         $token = $user->tokens->find($token);
         
         $token->revoke();
+
+        return true;
     }
 
     private static function get_hashing_value()
