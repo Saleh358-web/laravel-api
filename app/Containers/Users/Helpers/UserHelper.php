@@ -20,10 +20,10 @@ class UserHelper
      */
     public static function create(array $data)
     {
-        $data = UserHelper::trimUserData($data);
-
         DB::beginTransaction();
         try {
+            $data = UserHelper::trimUserData($data);
+
             $user = User::create([
                 'first_name' => $data['first_name'],
                 'last_name' => $data['last_name'],
@@ -36,7 +36,7 @@ class UserHelper
             return $user;
         } catch (\Exception $e) {
             DB::rollback();
-            throw $e;
+            throw new CreateUserFailedException();
         }
 
         DB::rollback();
@@ -52,10 +52,11 @@ class UserHelper
      */
     public static function update(User $user, array $data)
     {
-        $data = UserHelper::trimUserData($data);
 
         DB::beginTransaction();
         try {
+            $data = UserHelper::trimUserData($data);
+
             $user->first_name = $data['first_name'];
             $user->last_name = $data['last_name'];
 
@@ -77,6 +78,11 @@ class UserHelper
             return $user;
         } catch (\Exception $e) {
             DB::rollback();
+
+            if($e->getMessage() != null) {
+                // We have a normal exception
+                throw new UpdateUserFailedException();
+            }
             throw $e;
         }
 
@@ -86,9 +92,15 @@ class UserHelper
 
     public static function trimUserData(array $data)
     {
-        $data['first_name'] = trim($data['first_name']);
-        $data['last_name'] = trim($data['last_name']);
-        $data['email'] = trim($data['email']);
+        if(isset($data['first_name']) && $data['first_name'] != '') {
+            $data['first_name'] = trim($data['first_name']);
+        }
+        if(isset($data['last_name']) && $data['last_name'] != '') {
+            $data['last_name'] = trim($data['last_name']);
+        }
+        if(isset($data['email']) && $data['email'] != '') {
+            $data['email'] = trim($data['email']);
+        }
         if(isset($data['password']) && $data['password'] != '') {
             $data['password'] = trim($data['password']);
         }

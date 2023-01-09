@@ -18,6 +18,7 @@ class PassportAuthControllerTest extends TestCase
             'password' => 'password',
         ]);
     }
+    
     /**
      * Test successful login.
      *
