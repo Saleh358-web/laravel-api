@@ -8,6 +8,9 @@ use App\Containers\Users\Helpers\UserHelper;
 use App\Containers\Users\Exceptions\CreateUserFailedException;
 use App\Containers\Users\Exceptions\UpdateUserFailedException;
 use App\Containers\Users\Exceptions\DuplicateEmailException;
+use App\Containers\Users\Exceptions\OldPasswordException;
+use App\Containers\Users\Exceptions\SameOldPasswordException;
+use App\Containers\Users\Exceptions\UpdatePasswordFailedException;
 use Illuminate\Support\Str;
 use App\Models\User;
 
@@ -146,6 +149,98 @@ class UserHelperTest extends TestCase
         $result = UserHelper::update($user, $userData);
 
         $this->assertException($result, 'UpdateUserFailedException');
+    }
+
+    /**
+     * Test password update successful.
+     *
+     * @return void
+     */
+    public function test_helper_update_password_successful()
+    {
+        $this->setUp();
+
+        $userData = $this->getUserData();
+        $user = UserHelper::create($userData);
+        
+        $data = [
+            'old_password' => $userData['password'],
+            'password' => 'new_password',
+        ];
+
+        $updated = UserHelper::updatePassword($user, $data);
+        $this->assertEquals(true, $updated);
+    }
+
+    /**
+     * Test password update fail as same old password.
+     *
+     * @return void
+     */
+    public function test_helper_update_password_fail_same_old_password()
+    {
+        $this->setUp();
+
+        $userData = $this->getUserData();
+        $user = UserHelper::create($userData);
+        
+        $data = [
+            'old_password' => $userData['password'],
+            'password' => $userData['password'],
+        ];
+
+        $this->expectException(SameOldPasswordException::class);
+
+        $updated = UserHelper::updatePassword($user, $data);
+
+        $this->assertException($result, 'SameOldPasswordException');
+    }
+
+    /**
+     * Test password update fail as wrong old password.
+     *
+     * @return void
+     */
+    public function test_helper_update_password_fail_wrong_old_password()
+    {
+        $this->setUp();
+
+        $userData = $this->getUserData();
+        $user = UserHelper::create($userData);
+        
+        $data = [
+            'old_password' => 'wrong_password',
+            'password' => 'new_password',
+        ];
+
+        $this->expectException(OldPasswordException::class);
+
+        $updated = UserHelper::updatePassword($user, $data);
+
+        $this->assertException($result, 'OldPasswordException');
+    }
+
+    /**
+     * Test password update fail general.
+     *
+     * @return void
+     */
+    public function test_helper_update_password_fail_general()
+    {
+        $this->setUp();
+
+        $userData = $this->getUserData();
+        $user = UserHelper::create($userData);
+        
+        $data = [
+            'old_password' => $userData['password'],
+        ];
+
+        $this->expectException(UpdatePasswordFailedException::class);
+
+        $updated = UserHelper::updatePassword($user, $data);
+
+        $this->assertException($result, 'UpdatePasswordFailedException');
     }
 
     private function getUserData()

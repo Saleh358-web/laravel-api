@@ -107,11 +107,11 @@ class UserHelper
         try {
             $data = UserHelper::trimPasswords($data);
 
-            if(!Hash::check($data['old_password'], auth()->user()->password)) {
+            if(!Hash::check($data['old_password'], $user->password)) {
                 throw new OldPasswordException();
             }
 
-            if(Hash::check($data['password'], auth()->user()->password)) {
+            if(Hash::check($data['password'], $user->password)) {
                 throw new SameOldPasswordException();
             }
 
@@ -124,7 +124,6 @@ class UserHelper
             return true;
         } catch (\Exception $e) {
             DB::rollback();
-
             if($e->getMessage() != null) {
                 // We have a normal exception
                 throw new UpdatePasswordFailedException();
