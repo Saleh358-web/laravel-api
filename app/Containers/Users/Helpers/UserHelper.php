@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\DB;
 use App\Containers\Users\Exceptions\UpdateUserFailedException;
 use App\Containers\Users\Exceptions\DuplicateEmailException;
 use App\Containers\Users\Exceptions\CreateUserFailedException;
+use App\Containers\Users\Exceptions\OldPasswordException;
+use App\Containers\Users\Exceptions\SameOldPasswordException;
+use App\Containers\Users\Exceptions\UpdatePasswordFailedException;
 use Exception;
 
 class UserHelper
@@ -43,7 +46,7 @@ class UserHelper
         throw new CreateUserFailedException();
     }
     
-     /**
+    /**
      * update user
      * 
      * @param  User $user
@@ -90,6 +93,49 @@ class UserHelper
         throw new UpdateUserFailedException();
     }
 
+    /**
+     * update user
+     * 
+     * @param  User $user
+     * @param  array $data
+     * @return User | OldPasswordException | SameOldPasswordException | UpdatePasswordFailedException
+     */
+    public static function updatePassword(User $user, array $data)
+    {
+        DB::beginTransaction();
+
+        try {
+            $data = UserHelper::trimPasswords($data);
+
+            if(!Hash::check($data['old_password'], auth()->user()->password)) {
+                throw new OldPasswordException();
+            }
+
+            if(Hash::check($data['password'], auth()->user()->password)) {
+                throw new SameOldPasswordException();
+            }
+
+            $user->password = Hash::make($data['password']);
+            $user->password_updated_at = now();
+            $user->save();
+
+            DB::commit();
+
+            return true;
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            if($e->getMessage() != null) {
+                // We have a normal exception
+                throw new UpdatePasswordFailedException();
+            }
+            throw $e;
+        }
+
+        DB::rollback();
+        throw new UpdatePasswordFailedException();
+    }
+
     public static function trimUserData(array $data)
     {
         if(isset($data['first_name']) && $data['first_name'] != '') {
@@ -100,6 +146,17 @@ class UserHelper
         }
         if(isset($data['email']) && $data['email'] != '') {
             $data['email'] = trim($data['email']);
+        }
+        if(isset($data['password']) && $data['password'] != '') {
+            $data['password'] = trim($data['password']);
+        }
+        return $data;
+    }
+
+    public static function trimPasswords(array $data)
+    {
+        if(isset($data['old_password']) && $data['old_password'] != '') {
+            $data['old_password'] = trim($data['old_password']);
         }
         if(isset($data['password']) && $data['password'] != '') {
             $data['password'] = trim($data['password']);

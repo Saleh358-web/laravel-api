@@ -13,4 +13,7 @@ Route::group([
     // Profile
     Route::get('/profile', [ProfileController::class, 'get'])->name('profile.get');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // Password
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
 });

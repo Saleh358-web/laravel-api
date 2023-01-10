@@ -3,6 +3,7 @@
 namespace App\Helpers\Response;
 
 use App\Helpers\Response\ResponseJsonErrorReturn;
+use Exception;
 
 trait ResponseHelper
 {
@@ -30,5 +31,29 @@ trait ResponseHelper
         }
 
         return response()->json($data, 200);
+    }
+
+    /**
+     * This function, receives an exception, 
+     * checks if it is a general exception or a custom exception
+     * builds a message and returns it
+     * 
+     * @param Exception $e
+     * @return string $message
+     */
+    public function exception_message(Exception $e)
+    {
+        try {
+            if($e->getMessage() != null && $e->getMessage() != '') {
+                return $e->getMessage();
+            }
+            if($e->getMessage() == '') {
+                // We have a normal exception
+                return $e->error();
+            }
+        } catch (Exception $execption) {
+            return $e->getMessage();
+        }
+        return $e->getMessage();
     }
 }

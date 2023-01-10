@@ -40,4 +40,25 @@ trait ProfileValidators
 
         return Validator::make($data, $rules);
     }
+
+    /**
+     * Get a validator for an incoming update user's password request.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    public function update_password_validator(array $data)
+    {
+        $rules = [
+            'old_password' => 'required|string|min:2',
+            'password' => [
+                'required',
+                'min:6',
+                'regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#@-_%]).*$/',
+                'confirmed'
+            ]
+        ];
+
+        return Validator::make($data, $rules);
+    }
 }

@@ -34,8 +34,8 @@ class ProfileController extends Controller
                 $info,
                 $messages['profile']['get']
             );
-        } catch (\Exception $e) {
-            return $this->return_response(405, [], $messages['profile']['get_error']);
+        } catch (Exception $e) {
+            return $this->return_response(405, [], $messages['profile']['get_error'], $this->exception_message($e));
         }
 
         return $this->return_response(405, [], $messages['profile']['get_error']);
@@ -68,9 +68,40 @@ class ProfileController extends Controller
                 $messages['profile']['update']
             );
         } catch (Exception $e) {
-            return $this->return_response(405, [], $messages['profile']['update_error'], $e->error());
+            return $this->return_response(405, [], $messages['profile']['update_error'], $this->exception_message($e));
         }
 
         return $this->return_response(405, [], $messages['profile']['update_error']);
+    }
+
+    /**
+     * Update logged in user password
+     * 
+     * @param  Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function updatePassword(Request $request)
+    {
+        $messages = $this->messages();
+
+        try {
+            $data = $request->all();
+            $this->update_password_validator($data)->validate();
+
+            $user = Auth::user();
+            $updated = UserHelper::updatePassword($user, $data);
+
+            if($updated) {
+                return $this->return_response(
+                    200,
+                    [],
+                    $messages['profile']['password']
+                );
+            }
+        } catch (Exception $e) {
+            return $this->return_response(405, [], $messages['profile']['password_error'], $this->exception_message($e));
+        }
+
+        return $this->return_response(405, [], $messages['profile']['password_error']);
     }
 }
