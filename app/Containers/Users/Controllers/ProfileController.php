@@ -58,9 +58,13 @@ class ProfileController extends Controller
             $user = Auth::user();
             $updateUser = UserHelper::update($user, $data);
 
+            $data = [
+                'user' => $updateUser
+            ];
+
             return $this->return_response(
                 200,
-                [$updateUser],
+                $data,
                 $messages['profile']['update']
             );
         } catch (Exception $e) {

@@ -5,7 +5,6 @@ namespace  App\Containers\Auth\Tests;
 use Tests\TestDatabaseTrait;
 use Tests\TestCase;
 use App\Containers\Users\Helpers\UserHelper;
-use App\Containers\Auth\Helpers\UserAuthHelper;
 use App\Containers\Users\Exceptions\CreateUserFailedException;
 use App\Containers\Users\Exceptions\UpdateUserFailedException;
 use App\Containers\Users\Exceptions\DuplicateEmailException;

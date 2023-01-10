@@ -48,9 +48,9 @@ class PassportAuthControllerTest extends TestCase
              'token',
              'status',
              'message'
-         ]);
+        ]);
 
-         $this->assertAuthenticated();
+        $this->assertAuthenticated();
     }
 
     /**
@@ -70,10 +70,10 @@ class PassportAuthControllerTest extends TestCase
         $response = $this->json('POST', '/api/v1/login', $body, ['Accept' => 'application/json']);
 
         $response->assertStatus(401)->assertJsonStructure([
-             'status',
-             'message',
-             'error'
-         ]);
+            'status',
+            'message',
+            'error'
+        ]);
     }
 
     /**
