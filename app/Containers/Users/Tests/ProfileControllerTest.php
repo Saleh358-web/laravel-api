@@ -97,4 +97,37 @@ class ProfileControllerTest extends TestCase
             'message'
         ]);
     }
+
+    /**
+     * Test fail update profile.
+     *
+     * @return void
+     */
+    public function test_update_fail_email()
+    {
+        $userCreatedWithRaw = $this->createUser();
+
+        $user = $userCreatedWithRaw['user'];
+
+        $content = $this->login(null, $userCreatedWithRaw['userRawData']);
+
+        $user2CreatedWithRaw = $this->createUser();
+
+        $body = [
+            'first_name' => Str::random(5),
+            'last_name' => Str::random(5),
+            'email' => $user2CreatedWithRaw['userRawData']['email'],
+        ];
+
+        $response = $this->json(
+            'PUT',
+            '/api/v1/profile',
+            $body,
+            [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $content->token
+            ]);
+
+        $response->assertStatus(405);
+    }
 }
