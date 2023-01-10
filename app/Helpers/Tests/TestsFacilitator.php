@@ -53,7 +53,7 @@ trait TestsFacilitator
             'first_name' => Str::random(5),
             'last_name' => Str::random(5),
             'email' => Str::random(5) . '@' . Str::random(5) . '.com',
-            'password' => Str::random(8),
+            'password' => Str::random(8) . 'A@1' // password should have at lease 1 capital letter, 1 character and 1 number
         ];
 
         return [

@@ -130,4 +130,140 @@ class ProfileControllerTest extends TestCase
 
         $response->assertStatus(405);
     }
+
+    /**
+     * Test successful update password.
+     *
+     * @return void
+     */
+    public function test_update_password_successful()
+    {
+        $userCreatedWithRaw = $this->createUser();
+
+        $user = $userCreatedWithRaw['user'];
+
+        $content = $this->login(null, $userCreatedWithRaw['userRawData']);
+
+        $body = [
+            'old_password' => $userCreatedWithRaw['userRawData']['password'],
+            'password' => 'P@ssword1',
+            'password_confirmation' => 'P@ssword1',
+        ];
+
+        $response = $this->json(
+            'PUT',
+            '/api/v1/profile/password',
+            $body,
+            [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $content->token
+            ]);
+
+        $response->assertStatus(200)->assertJsonStructure([
+            'status',
+            'message'
+        ]);
+    }
+
+    /**
+     * Test validation fail update password.
+     *
+     * @return void
+     */
+    public function test_update_password_validation_fail()
+    {
+        $userCreatedWithRaw = $this->createUser();
+
+        $user = $userCreatedWithRaw['user'];
+
+        $content = $this->login(null, $userCreatedWithRaw['userRawData']);
+
+        $body = [
+            'old_password' => $userCreatedWithRaw['userRawData']['password'],
+            'password' => 'P@ssword1',
+        ];
+
+        $response = $this->json(
+            'PUT',
+            '/api/v1/profile/password',
+            $body,
+            [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $content->token
+            ]);
+
+        $response->assertStatus(405)->assertJsonStructure([
+            'status',
+            'message',
+            'error'
+        ]);
+    }
+
+    /**
+     * Test same old password fail update password.
+     *
+     * @return void
+     */
+    public function test_update_password_same_old_password_fail()
+    {
+        $userCreatedWithRaw = $this->createUser();
+
+        $user = $userCreatedWithRaw['user'];
+
+        $content = $this->login(null, $userCreatedWithRaw['userRawData']);
+
+        $body = [
+            'old_password' => $userCreatedWithRaw['userRawData']['password'],
+            'password' => $userCreatedWithRaw['userRawData']['password'],
+            'password_confirmation' => $userCreatedWithRaw['userRawData']['password'],
+        ];
+
+        $response = $this->json(
+            'PUT',
+            '/api/v1/profile/password',
+            $body,
+            [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $content->token
+            ]);
+
+        $response->assertStatus(405)->assertJsonStructure([
+            'status',
+            'message'
+        ]);
+    }
+
+    /**
+     * Test wrong old password fail update password.
+     *
+     * @return void
+     */
+    public function test_update_password_wrong_old_password_fail()
+    {
+        $userCreatedWithRaw = $this->createUser();
+
+        $user = $userCreatedWithRaw['user'];
+
+        $content = $this->login(null, $userCreatedWithRaw['userRawData']);
+
+        $body = [
+            'old_password' => 'wrong_old_password',
+            'password' => 'P@ssword1',
+            'password_confirmation' => 'P@ssword1',
+        ];
+
+        $response = $this->json(
+            'PUT',
+            '/api/v1/profile/password',
+            $body,
+            [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $content->token
+            ]);
+
+        $response->assertStatus(405)->assertJsonStructure([
+            'status',
+            'message'
+        ]);
+    }
 }
