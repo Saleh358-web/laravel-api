@@ -196,6 +196,11 @@ return [
         App\Providers\RouteServiceProvider::class,
         Laravel\Passport\PassportServiceProvider::class,
 
+        /*
+         * Custom Service Providers...
+         */
+        App\Providers\PermissionsServiceProvider::class,
+
     ],
 
     /*
