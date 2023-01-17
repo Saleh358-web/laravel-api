@@ -19,7 +19,6 @@ Route::group([
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
     
     Route::group([
-        'prefix' => 'v1',
         'middleware' => ['roles:super-admin/admin']
     ], function ()
     {

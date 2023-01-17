@@ -27,6 +27,8 @@ class UserHelper
             $paginationCount = ConstantsHelper::getPagination($paginationCount);
 
             $users = User::with(['roles', 'permissions'])->paginate($paginationCount);
+            $users = json_decode(json_encode($users)); // This will change its type to StdClass
+
             return $users;
         } catch (\Exception $e) {
             return [];

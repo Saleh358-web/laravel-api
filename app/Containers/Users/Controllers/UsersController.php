@@ -24,8 +24,11 @@ class UsersController extends Controller
         $messages = $this->messages();
 
         try {
+            $data = UserHelper::getAll();
+            
             $info = [
-                'users' => UserHelper::getAll()
+                'meta' => $this->metaData($data),
+                'users' => $data->data
             ];
 
             return $this->return_response(

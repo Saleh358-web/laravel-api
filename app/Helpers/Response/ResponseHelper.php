@@ -56,4 +56,28 @@ trait ResponseHelper
         }
         return $e->getMessage();
     }
+
+    /**
+     * This function, receives data that are paginated by laravel
+     * Then it prettifies/customizes the data and returns it
+     * 
+     * @param $data
+     * @return $data
+     */
+    public function metaData($data)
+    {
+        return [
+            'current_page' => $data->current_page,
+            'first_page_url' => $data->first_page_url,
+            'from' => $data->from,
+            'last_page' => $data->last_page,
+            'last_page_url' => $data->last_page_url,
+            'next_page_url' => $data->next_page_url,
+            'path' => $data->path,
+            'per_page' => $data->per_page,
+            'prev_page_url' => $data->prev_page_url,
+            'to' => $data->to,
+            'total' => $data->total,
+        ];
+    }
 }
