@@ -17,8 +17,32 @@ use Exception;
 class UserHelper
 {
     /**
+     * get user base info (only from users table)
+     * 
+     * @param int $id
+     * @return User $user
+     */
+    public static function id(int $id)
+    {
+        try {
+            $user = User::find($id);
+
+            if(!$user) {
+                // ToDo: throw not found exception
+            }
+
+            return $user;
+        } catch (\Exception $e) {
+            return null;
+        }
+
+        return null;
+    }
+
+    /**
      * get all users
      * 
+     * @param int $paginationCount
      * @return pagination of users
      */
     public static function getAll(int $paginationCount = null)
@@ -31,7 +55,7 @@ class UserHelper
 
             return $users;
         } catch (\Exception $e) {
-            return [];
+            throw $e;
         }
 
         return [];
@@ -155,6 +179,44 @@ class UserHelper
 
         DB::rollback();
         throw new UpdatePasswordFailedException();
+    }
+
+    /**
+     * update user password
+     * 
+     * @param  User $user
+     * @param  int $permissionId
+     * @return boolean | Exception
+     */
+    public static function attachPermission(User $user, int $permissionId)
+    {
+        DB::beginTransaction();
+
+        try {
+            $permission = Permission::find($permissionId);
+
+            if(!$permission) {
+                
+                // ToDO: throw not found exception
+            }
+
+            $user->permissions()->attach($permission);
+
+            DB::commit();
+
+            return true;
+        } catch (\Exception $e) {
+            DB::rollback();
+            if($e->getMessage() != null) {
+                // We have a normal exception
+                // ToDo throw Exception
+            }
+            throw $e;
+        }
+
+        DB::rollback();
+        // ToDo throw Exception
+        return false;
     }
 
     public static function trimUserData(array $data)

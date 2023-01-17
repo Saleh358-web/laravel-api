@@ -19,11 +19,15 @@ Route::group([
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
     
     Route::group([
+        'prefix' => 'users',
         'middleware' => ['roles:super-admin/admin']
     ], function ()
     {
         // Users
-        Route::get('users', [UsersController::class, 'get'])->name('users.get');
+        Route::get('/', [UsersController::class, 'get'])->name('users.get');
+
+        // Add permission to user
+        Route::put('addPermissionsToUser', [UsersController::class, 'addPermissionsToUser'])->name('users.addPermissionsToUser');
     });
 
 });

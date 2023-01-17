@@ -48,6 +48,11 @@ trait HasPermissionsTrait
 
     public function allowedTo(string $permissionsString)
     {
+        /* Super admins are allowed all permissions and full access */
+        if ($this->roles->contains('slug', 'super-admin')) {
+            return true;
+        }
+
         $permissions = explode('/', $permissionsString);
         foreach ($permissions as $permission) {
             if ($this->permissions->contains('slug', $permission)) {

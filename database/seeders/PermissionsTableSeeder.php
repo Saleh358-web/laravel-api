@@ -4,10 +4,12 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Permission;
+use App\Helpers\Database\PermissionsHelper;
 
 class PermissionsTableSeeder extends Seeder
 {
+    use PermissionsHelper;
+
     /**
      * Run the database seeds.
      *
@@ -15,14 +17,6 @@ class PermissionsTableSeeder extends Seeder
      */
     public function run()
     {
-        $permissions = [
-            [
-                'name' => 'Get Users',
-                'slug' => 'get-users',
-            ]
-        ];
-        foreach($permissions as $permission) {
-            Permission::create($permission);
-        }
+        $this->addPermissions();
     }
 }

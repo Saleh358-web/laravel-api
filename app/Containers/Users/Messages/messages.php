@@ -22,6 +22,9 @@ trait Messages
             'users' => [
                 'get' => 'Users found',
                 'get_error' => 'Unable to get users',
+                'attach_permissions' => 'Permissions added successfully',
+                'attach_permissions_failed' => 'Attach permissions failed',
+                'attach_permissions_not_allowed' => 'This user is not allowed to attach/detach permissions',
             ],
             'email_exists' => 'Email already exists'
         ];
