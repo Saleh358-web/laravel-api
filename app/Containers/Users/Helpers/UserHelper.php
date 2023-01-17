@@ -5,6 +5,7 @@ namespace App\Containers\Users\Helpers;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use App\Helpers\ConstantsHelper;
 use App\Containers\Users\Exceptions\UpdateUserFailedException;
 use App\Containers\Users\Exceptions\DuplicateEmailException;
 use App\Containers\Users\Exceptions\CreateUserFailedException;
@@ -15,6 +16,25 @@ use Exception;
 
 class UserHelper
 {
+    /**
+     * get all users
+     * 
+     * @return pagination of users
+     */
+    public static function getAll(int $paginationCount = null)
+    {
+        try {
+            $paginationCount = ConstantsHelper::getPagination($paginationCount);
+
+            $users = User::with(['roles', 'permissions'])->paginate($paginationCount);
+            return $users;
+        } catch (\Exception $e) {
+            return [];
+        }
+
+        return [];
+    }
+
     /**
      * create user
      * 
@@ -94,7 +114,7 @@ class UserHelper
     }
 
     /**
-     * update user
+     * update user password
      * 
      * @param  User $user
      * @param  array $data

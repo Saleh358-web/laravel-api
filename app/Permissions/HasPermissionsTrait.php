@@ -2,15 +2,14 @@
 
 namespace App\Permissions;
 
-use App\Permission;
-use App\Role;
+use App\Models\Permission;
+use App\Models\Role;
 
 trait HasPermissionsTrait 
 {
     public function givePermissionsTo(... $permissions)
     {
         $permissions = $this->getAllPermissions($permissions);
-        dd($permissions);
         if($permissions === null) {
             return $this;
         }
@@ -46,9 +45,21 @@ trait HasPermissionsTrait
         }
         return false;
     }
-  
-    public function hasRole( ... $roles )
+
+    public function allowedTo(string $permissionsString)
     {
+        $permissions = explode('/', $permissionsString);
+        foreach ($permissions as $permission) {
+            if ($this->permissions->contains('slug', $permission)) {
+                return true;
+            }
+        }
+        return false;
+    }
+  
+    public function hasRole(string $rolesString)
+    {
+        $roles = explode('/', $rolesString);
         foreach ($roles as $role) {
             if ($this->roles->contains('slug', $role)) {
                 return true;

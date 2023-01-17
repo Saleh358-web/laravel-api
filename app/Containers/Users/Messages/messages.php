@@ -19,6 +19,10 @@ trait Messages
                 'old_password_error' => 'Old password is incorrect',
                 'old_password_equal_new' => 'Password shouldn\'t be the same as the old one',
             ],
+            'users' => [
+                'get' => 'Users found',
+                'get_error' => 'Unable to get users',
+            ],
             'email_exists' => 'Email already exists'
         ];
     }
