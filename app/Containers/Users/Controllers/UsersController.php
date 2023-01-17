@@ -8,7 +8,7 @@ use App\Containers\Users\Messages\Messages;
 use App\Helpers\Response\ResponseHelper;
 use App\Containers\Users\Helpers\UserHelper;
 use Exception;
-use App\Models\User;
+use Auth;
 
 class UsersController extends Controller
 {
@@ -22,6 +22,10 @@ class UsersController extends Controller
     public function get()
     {
         $messages = $this->messages();
+
+        if (!Auth::user()->allowedTo('get-users')) {
+            return $this->return_response(405, [], $messages['users']['get_error']);
+        }
 
         try {
             $data = UserHelper::getAll();
