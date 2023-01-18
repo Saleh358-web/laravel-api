@@ -15,6 +15,13 @@ class ProfileController extends Controller
 {
     use ResponseHelper, Messages, ProfileValidators;
 
+    protected $messages = array();
+
+    public function __construct()
+    {
+        $this->messages = $this->messages();
+    }
+
     /**
      * Get logged in user profile
      * 
@@ -22,8 +29,6 @@ class ProfileController extends Controller
      */
     public function get()
     {
-        $messages = $this->messages();
-
         try {
             $info = [
                 'user' => Auth::user()
@@ -32,13 +37,21 @@ class ProfileController extends Controller
             return $this->return_response(
                 200,
                 $info,
-                $messages['profile']['get']
+                $this->messages['profile']['get']
             );
         } catch (Exception $e) {
-            return $this->return_response(405, [], $messages['profile']['get_error'], $this->exception_message($e));
+            return $this->return_response(
+                405,
+                [],
+                $this->messages['profile']['get_error'],
+                $this->exception_message($e)
+            );
         }
-
-        return $this->return_response(405, [], $messages['profile']['get_error']);
+        return $this->return_response(
+            405,
+            [],
+            $this->messages['profile']['get_error']
+        );
     }
 
     /**
@@ -49,8 +62,6 @@ class ProfileController extends Controller
      */
     public function update(Request $request)
     {
-        $messages = $this->messages();
-
         try {
             $data = $request->all();
             $this->update_validator($data)->validate();
@@ -65,13 +76,22 @@ class ProfileController extends Controller
             return $this->return_response(
                 200,
                 $data,
-                $messages['profile']['update']
+                $this->messages['profile']['update']
             );
         } catch (Exception $e) {
-            return $this->return_response(405, [], $messages['profile']['update_error'], $this->exception_message($e));
+            return $this->return_response(
+                405,
+                [],
+                $this->messages['profile']['update_error'],
+                $this->exception_message($e)
+            );
         }
 
-        return $this->return_response(405, [], $messages['profile']['update_error']);
+        return $this->return_response(
+            405,
+            [],
+            $this->messages['profile']['update_error']
+        );
     }
 
     /**
@@ -82,8 +102,6 @@ class ProfileController extends Controller
      */
     public function updatePassword(Request $request)
     {
-        $messages = $this->messages();
-
         try {
             $data = $request->all();
             $this->update_password_validator($data)->validate();
@@ -95,13 +113,22 @@ class ProfileController extends Controller
                 return $this->return_response(
                     200,
                     [],
-                    $messages['profile']['password']
+                    $this->messages['profile']['password']
                 );
             }
         } catch (Exception $e) {
-            return $this->return_response(405, [], $messages['profile']['password_error'], $this->exception_message($e));
+            return $this->return_response(
+                405,
+                [],
+                $this->messages['profile']['password_error'],
+                $this->exception_message($e)
+            );
         }
 
-        return $this->return_response(405, [], $messages['profile']['password_error']);
+        return $this->return_response(
+            405,
+            [],
+            $this->messages['profile']['password_error']
+        );
     }
 }

@@ -10,6 +10,7 @@ trait Messages
             'profile' => [
                 'get' => 'Returned Profile',
                 'get_error' => 'Unable to get user profile',
+                'exception' => 'User profile',
                 'update_error' => 'User profile update failed',
                 'update' => 'User profile updated successfully',
                 'create_error' => 'Create user failed',

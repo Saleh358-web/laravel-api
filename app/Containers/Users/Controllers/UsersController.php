@@ -16,6 +16,13 @@ class UsersController extends Controller
 {
     use ResponseHelper, Messages, PermissionsHelper, UsersValidators;
 
+    protected $messages = array();
+
+    public function __construct()
+    {
+        $this->messages = $this->messages();
+    }
+
     /**
      * Get all users
      * 
@@ -23,12 +30,14 @@ class UsersController extends Controller
      */
     public function get()
     {
-        $messages = $this->messages();
-
         $this->addPermission(['name' => 'Get all users', 'slug' => 'get-users']);
 
         if (!Auth::user()->allowedTo('get-users')) {
-            return $this->return_response(405, [], $messages['users']['get_error']);
+            return $this->return_response(
+                405,
+                [],
+                $this->messages['users']['get_error']
+            );
         }
 
         try {
@@ -42,13 +51,22 @@ class UsersController extends Controller
             return $this->return_response(
                 200,
                 $info,
-                $messages['users']['get']
+                $this->messages['users']['get']
             );
         } catch (Exception $e) {
-            return $this->return_response(405, [], $messages['users']['get_error'], $this->exception_message($e));
+            return $this->return_response(
+                405,
+                [],
+                $this->messages['users']['get_error'],
+                $this->exception_message($e)
+            );
         }
 
-        return $this->return_response(405, [], $messages['users']['get_error']);
+        return $this->return_response(
+            405,
+            [],
+            $this->messages['users']['get_error']
+        );
     }
 
     /**
@@ -60,12 +78,12 @@ class UsersController extends Controller
      */
     public function addPermissionsToUser(Request $request)
     {
-        $messages = $this->messages();
+        $this->messages = $this->messages();
 
         $this->addPermission(['name' => 'Attach Permissions', 'slug' => 'attach-permissions']);
 
         if (!Auth::user()->allowedTo('attach-permissions')) {
-            return $this->return_response(405, [], $messages['users']['attach_permissions_not_allowed']);
+            return $this->return_response(405, [], $this->messages['users']['attach_permissions_not_allowed']);
         }
 
         try {
@@ -82,12 +100,12 @@ class UsersController extends Controller
             return $this->return_response(
                 200,
                 $info,
-                $messages['users']['attach_permissions']
+                $this->messages['users']['attach_permissions']
             );
         } catch (Exception $e) {
-            return $this->return_response(405, [], $messages['users']['attach_permissions_failed'], $this->exception_message($e));
+            return $this->return_response(405, [], $this->messages['users']['attach_permissions_failed'], $this->exception_message($e));
         }
 
-        return $this->return_response(405, [], $messages['users']['attach_permissions_failed']);
+        return $this->return_response(405, [], $this->messages['users']['attach_permissions_failed']);
     }
 }

@@ -13,10 +13,20 @@ use App\Containers\Users\Exceptions\DuplicateEmailException;
 use App\Containers\Users\Exceptions\OldPasswordException;
 use App\Containers\Users\Exceptions\SameOldPasswordException;
 use App\Containers\Users\Exceptions\UpdatePasswordFailedException;
+use App\Containers\Users\Messages\Messages;
 use Exception;
 
 class UserHelper
 {
+    use Messages;
+    
+    protected $messages = array();
+
+    public function __construct()
+    {
+        $this->messages = $this->messages();
+    }
+
     /**
      * get user base info (only from users table)
      * 
