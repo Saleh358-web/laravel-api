@@ -39,7 +39,7 @@ class UserHelper
             $user = User::find($id);
 
             if(!$user) {
-                throw new NotFoundException('User');
+                throw new NotFoundException($this->messages['profile']['exception']);
             }
 
             return $user;
@@ -96,11 +96,11 @@ class UserHelper
             return $user;
         } catch (\Exception $e) {
             DB::rollback();
-            throw new CreateFailedException('User');
+            throw new CreateFailedException($this->messages['profile']['exception']);
         }
 
         DB::rollback();
-        throw new CreateFailedException('User');
+        throw new CreateFailedException($this->messages['profile']['exception']);
     }
     
     /**
@@ -115,7 +115,7 @@ class UserHelper
 
         DB::beginTransaction();
         try {
-            throw new CreateFailedException('User');
+            throw new CreateFailedException($this->messages['profile']['exception']);
 
             $data = UserHelper::trimUserData($data);
 
@@ -143,13 +143,13 @@ class UserHelper
 
             if($e->getMessage() != null) {
                 // We have a normal exception
-                throw new UpdateFailedException('User');
+                throw new UpdateFailedException($this->messages['profile']['exception']);
             }
             throw $e;
         }
 
         DB::rollback();
-        throw new UpdateFailedException('User');
+        throw new UpdateFailedException($this->messages['profile']['exception']);
     }
 
     /**

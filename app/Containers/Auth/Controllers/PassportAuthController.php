@@ -7,11 +7,19 @@ use Illuminate\Http\Request;
 use App\Containers\Auth\Validators\UserLoginValidator;
 use App\Helpers\Response\ResponseHelper;
 use App\Containers\Auth\Helpers\UserAuthHelper;
+use App\Containers\Auth\Messages\Messages;
 use Exception;
 
 class PassportAuthController extends Controller
 {
-    use UserLoginValidator, ResponseHelper;
+    use UserLoginValidator, ResponseHelper, Messages;
+
+    protected $messages = array();
+
+    protected function __construct()
+    {
+        $this->messages = $this->messages();
+    }
     
     /**
      * Login user
@@ -30,19 +38,19 @@ class PassportAuthController extends Controller
             $info = UserAuthHelper::login($user_data);
             
             if($info == null) {
-                return $this->return_response(401, [], 'Unable to login user');
+                return $this->return_response(401, [], $this->messages['login_failed']);
             }
         
             return $this->return_response(
                 200,
                 $info,
-                'User logged successfully'
+                $this->messages['login_success']
             );
         } catch (Exception $e) {
-            return $this->return_response(405, [], 'Unable to login user', $e->getMessage());
+            return $this->return_response(405, [], $this->messages['login_failed'], $e->getMessage());
         }
 
-        return $this->return_response(405, [], 'Unable to login user');
+        return $this->return_response(405, [], $this->messages['login_failed']);
     }
 
     /**
@@ -60,13 +68,13 @@ class PassportAuthController extends Controller
                 return $this->return_response(
                     200,
                     [],
-                    'User logged out successfully'
+                    $this->messages['logout_success']
                 );
             }
         } catch (Exception $e) {
-            return $this->return_response(400, [], 'Unable to logout user', $e->getMessage());
+            return $this->return_response(400, [], $this->messages['logout_failed'], $e->getMessage());
         }
 
-        return $this->return_response(400, [], 'Unable to logout user');
+        return $this->return_response(400, [], $this->messages['logout_failed']);
     }
 }
