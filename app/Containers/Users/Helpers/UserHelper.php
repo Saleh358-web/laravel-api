@@ -19,12 +19,12 @@ use Exception;
 class UserHelper
 {
     use Messages;
-    
-    protected $messages = array();
 
-    public function __construct()
+    public static function getMessages()
     {
-        $this->messages = $this->messages();
+        $helper = new UserHelper();
+        $messages = $helper->messages();
+        return $messages;
     }
 
     /**
@@ -36,10 +36,11 @@ class UserHelper
     public static function id(int $id)
     {
         try {
+            $messages = self::getMessages();
             $user = User::find($id);
 
             if(!$user) {
-                throw new NotFoundException($this->messages['profile']['exception']);
+                throw new NotFoundException($messages['profile']['exception']);
             }
 
             return $user;
@@ -59,6 +60,7 @@ class UserHelper
     public static function getAll(int $paginationCount = null)
     {
         try {
+            $messages = self::getMessages();
             $paginationCount = ConstantsHelper::getPagination($paginationCount);
 
             $users = User::with(['roles', 'permissions'])->paginate($paginationCount);
@@ -82,6 +84,7 @@ class UserHelper
     {
         DB::beginTransaction();
         try {
+            $messages = self::getMessages();
             $data = UserHelper::trimUserData($data);
 
             $user = User::create([
@@ -96,11 +99,11 @@ class UserHelper
             return $user;
         } catch (\Exception $e) {
             DB::rollback();
-            throw new CreateFailedException($this->messages['profile']['exception']);
+            throw new CreateFailedException($messages['profile']['exception']);
         }
 
         DB::rollback();
-        throw new CreateFailedException($this->messages['profile']['exception']);
+        throw new CreateFailedException($messages['profile']['exception']);
     }
     
     /**
@@ -112,11 +115,9 @@ class UserHelper
      */
     public static function update(User $user, array $data)
     {
-
         DB::beginTransaction();
         try {
-            throw new CreateFailedException($this->messages['profile']['exception']);
-
+            $messages = self::getMessages();
             $data = UserHelper::trimUserData($data);
 
             $user->first_name = $data['first_name'];
@@ -143,13 +144,13 @@ class UserHelper
 
             if($e->getMessage() != null) {
                 // We have a normal exception
-                throw new UpdateFailedException($this->messages['profile']['exception']);
+                throw new UpdateFailedException($messages['profile']['exception']);
             }
             throw $e;
         }
 
         DB::rollback();
-        throw new UpdateFailedException($this->messages['profile']['exception']);
+        throw new UpdateFailedException($messages['profile']['exception']);
     }
 
     /**
@@ -164,6 +165,7 @@ class UserHelper
         DB::beginTransaction();
 
         try {
+            $messages = self::getMessages();
             $data = UserHelper::trimPasswords($data);
 
             if(!Hash::check($data['old_password'], $user->password)) {
@@ -206,6 +208,7 @@ class UserHelper
         DB::beginTransaction();
 
         try {
+            $messages = self::getMessages();
             $permission = Permission::find($permissionId);
 
             if(!$permission) {

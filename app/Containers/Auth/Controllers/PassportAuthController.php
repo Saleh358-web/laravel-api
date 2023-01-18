@@ -16,7 +16,7 @@ class PassportAuthController extends Controller
 
     protected $messages = array();
 
-    protected function __construct()
+    public function __construct()
     {
         $this->messages = $this->messages();
     }
