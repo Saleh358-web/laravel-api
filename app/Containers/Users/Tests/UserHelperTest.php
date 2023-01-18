@@ -5,8 +5,8 @@ namespace  App\Containers\Auth\Tests;
 use Tests\TestDatabaseTrait;
 use Tests\TestCase;
 use App\Containers\Users\Helpers\UserHelper;
-use App\Containers\Users\Exceptions\CreateUserFailedException;
-use App\Containers\Users\Exceptions\UpdateUserFailedException;
+use App\Exceptions\Common\CreateFailedException;
+use App\Exceptions\Common\UpdateFailedException;
 use App\Containers\Users\Exceptions\DuplicateEmailException;
 use App\Containers\Users\Exceptions\OldPasswordException;
 use App\Containers\Users\Exceptions\SameOldPasswordException;
@@ -66,12 +66,12 @@ class UserHelperTest extends TestCase
         // This should create a new user 
         $result = UserHelper::create($userData);
         
-        $this->expectException(CreateUserFailedException::class);
+        $this->expectException(CreateFailedException::class);
 
         // Resend the same data to create user should fail
         $user = UserHelper::create($userData);
 
-        $this->assertException($result, 'CreateUserFailedException');
+        $this->assertException($result, 'CreateFailedException');
     }
 
     /**
@@ -143,12 +143,12 @@ class UserHelperTest extends TestCase
         $userData = $this->getUserData();
         $user = UserHelper::create($userData);
         
-        $this->expectException(UpdateUserFailedException::class);
+        $this->expectException(UpdateFailedException::class);
 
         $userData['first_name'] = Str::random(500);
         $result = UserHelper::update($user, $userData);
 
-        $this->assertException($result, 'UpdateUserFailedException');
+        $this->assertException($result, 'UpdateFailedException');
     }
 
     /**

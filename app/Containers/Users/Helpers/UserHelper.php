@@ -6,9 +6,10 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\ConstantsHelper;
-use App\Containers\Users\Exceptions\UpdateUserFailedException;
+use App\Exceptions\Common\NotFoundException;
+use App\Exceptions\Common\CreateFailedException;
+use App\Exceptions\Common\UpdateFailedException;
 use App\Containers\Users\Exceptions\DuplicateEmailException;
-use App\Containers\Users\Exceptions\CreateUserFailedException;
 use App\Containers\Users\Exceptions\OldPasswordException;
 use App\Containers\Users\Exceptions\SameOldPasswordException;
 use App\Containers\Users\Exceptions\UpdatePasswordFailedException;
@@ -28,7 +29,7 @@ class UserHelper
             $user = User::find($id);
 
             if(!$user) {
-                // ToDo: throw not found exception
+                throw new NotFoundException('User');
             }
 
             return $user;
@@ -65,7 +66,7 @@ class UserHelper
      * create user
      * 
      * @param  array $data
-     * @return User | CreateUserFailedException | Exception
+     * @return User | CreateFailedException | Exception
      */
     public static function create(array $data)
     {
@@ -85,11 +86,11 @@ class UserHelper
             return $user;
         } catch (\Exception $e) {
             DB::rollback();
-            throw new CreateUserFailedException();
+            throw new CreateFailedException('User');
         }
 
         DB::rollback();
-        throw new CreateUserFailedException();
+        throw new CreateFailedException('User');
     }
     
     /**
@@ -97,13 +98,15 @@ class UserHelper
      * 
      * @param  User $user
      * @param  array $data
-     * @return User | DuplicateEmailException | UpdateUserFailedException
+     * @return User | DuplicateEmailException | UpdateFailedException
      */
     public static function update(User $user, array $data)
     {
 
         DB::beginTransaction();
         try {
+            throw new CreateFailedException('User');
+
             $data = UserHelper::trimUserData($data);
 
             $user->first_name = $data['first_name'];
@@ -130,13 +133,13 @@ class UserHelper
 
             if($e->getMessage() != null) {
                 // We have a normal exception
-                throw new UpdateUserFailedException();
+                throw new UpdateFailedException('User');
             }
             throw $e;
         }
 
         DB::rollback();
-        throw new UpdateUserFailedException();
+        throw new UpdateFailedException('User');
     }
 
     /**
@@ -196,8 +199,7 @@ class UserHelper
             $permission = Permission::find($permissionId);
 
             if(!$permission) {
-                
-                // ToDO: throw not found exception
+                throw new NotFoundException('Permission');
             }
 
             $user->permissions()->attach($permission);
