@@ -2,6 +2,7 @@
 
 namespace App\Containers\Users\Helpers;
 
+use Auth;
 use App\Models\Role;
 use App\Models\Permission;
 use App\Models\User;
@@ -11,11 +12,13 @@ use App\Helpers\ConstantsHelper;
 use App\Exceptions\Common\NotFoundException;
 use App\Exceptions\Common\CreateFailedException;
 use App\Exceptions\Common\UpdateFailedException;
+use App\Exceptions\Common\NotAllowedException;
 use App\Containers\Users\Exceptions\DuplicateEmailException;
 use App\Containers\Users\Exceptions\OldPasswordException;
 use App\Containers\Users\Exceptions\SameOldPasswordException;
 use App\Containers\Users\Exceptions\UpdatePasswordFailedException;
 use App\Containers\Users\Messages\Messages;
+use App\Containers\Users\Helpers\UserRolesHelper;
 use Exception;
 
 class UserHelper
@@ -196,6 +199,48 @@ class UserHelper
 
         DB::rollback();
         throw new UpdatePasswordFailedException();
+    }
+
+    /**
+     * This function receives a user that should have his roles updated
+     * so this function checks if the current authenticated user is authorized
+     * to update that.
+     * and returns true if allowed or throws an exception if not.
+     * 
+     * @param User $userToBeUpdated
+     * @return boolean | NotAllowedException
+     */
+    public static function authorizedToUpdateUserRoles(User $userToBeUpdated)
+    {
+        try {
+            $userDoingTheUpdate = Auth::user();
+
+            if(!$userToBeUpdated || $userToBeUpdated == null || !$userDoingTheUpdate || $userDoingTheUpdate == null) {
+                throw new NotFoundException('User');
+            }
+            
+            $rolesOfUserDoingTheUpdate = $userDoingTheUpdate->roles()->get();
+            $highestRoleOfUserDoingTheUpdate = UserRolesHelper::getHighestRole($rolesOfUserDoingTheUpdate);
+
+            $rolesOfUserToBeUpdated = $userToBeUpdated->roles()->get();
+            $highestRoleOfUserToBeUpdated = UserRolesHelper::getHighestRole($rolesOfUserToBeUpdated);
+
+            if($highestRoleOfUserDoingTheUpdate->id >= $highestRoleOfUserToBeUpdated->id) {
+                // The user doing the update has a role with lower or equal priority to the user being updated
+                // So he is not allowed to update his roles,
+                throw new NotAllowedException('roles');
+            }
+
+            return true;
+        } catch (Exception $e) {
+            if($e->getMessage() != null) {
+                // We have a normal exception
+                throw new NotAllowedException('roles');
+            }
+            throw $e;
+        }
+
+        throw new NotAllowedException('roles');
     }
 
     /**

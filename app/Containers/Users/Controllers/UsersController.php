@@ -178,7 +178,7 @@ class UsersController extends Controller
     {
         $this->messages = $this->messages();
 
-        $this->addPermission(['name' => 'Attach Roles', 'slug' => 'roles-permissions']);
+        $this->addPermission(['name' => 'Attach Roles', 'slug' => 'attach-roles']);
 
         if (!Auth::user()->allowedTo('attach-roles')) {
             return $this->return_response(405, [], $this->messages['users']['attach_roles_not_allowed']);
@@ -191,15 +191,21 @@ class UsersController extends Controller
 
             $user = UserHelper::id($data['user_id']);
 
-            foreach($data['roles'] as $roleId) {
-                UserHelper::attachRole($user, $roleId);
-            }
+            // Check if current authenticated user is allowed to to update roles
+            $allowedToUpdateRoles = UserHelper::authorizedToUpdateUserRoles($user);
 
-            return $this->return_response(
-                200,
-                [],
-                $this->messages['users']['attach_roles']
-            );
+            if($allowedToUpdateRoles) {
+                foreach($data['roles'] as $roleId) {
+                    UserHelper::attachRole($user, $roleId);
+                }
+    
+                return $this->return_response(
+                    200,
+                    [],
+                    $this->messages['users']['attach_roles']
+                );
+            }
+            print_r($allowedToUpdateRoles);
         } catch (Exception $e) {
             return $this->return_response(
                 405,
@@ -240,15 +246,20 @@ class UsersController extends Controller
 
             $user = UserHelper::id($data['user_id']);
 
-            foreach($data['roles'] as $roleId) {
-                UserHelper::detachRole($user, $roleId);
-            }
+            // Check if current authenticated user is allowed to to update roles
+            $allowedToUpdateRoles = UserHelper::authorizedToUpdateUserRoles($user);
 
-            return $this->return_response(
-                200,
-                [],
-                $this->messages['users']['detach_roles']
-            );
+            if($allowedToUpdateRoles) {
+                foreach($data['roles'] as $roleId) {
+                    UserHelper::detachRole($user, $roleId);
+                }
+
+                return $this->return_response(
+                    200,
+                    [],
+                    $this->messages['users']['detach_roles']
+                );
+            }
         } catch (Exception $e) {
             return $this->return_response(
                 405,
