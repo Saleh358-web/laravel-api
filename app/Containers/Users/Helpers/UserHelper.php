@@ -2,6 +2,8 @@
 
 namespace App\Containers\Users\Helpers;
 
+use App\Models\Role;
+use App\Models\Permission;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -197,11 +199,11 @@ class UserHelper
     }
 
     /**
-     * update user password
+     * update user by attach permission
      * 
      * @param  User $user
      * @param  int $permissionId
-     * @return boolean | Exception
+     * @return boolean
      */
     public static function attachPermission(User $user, int $permissionId)
     {
@@ -222,15 +224,109 @@ class UserHelper
             return true;
         } catch (\Exception $e) {
             DB::rollback();
-            if($e->getMessage() != null) {
-                // We have a normal exception
-                // ToDo throw Exception
-            }
-            throw $e;
+            return false;
         }
 
         DB::rollback();
-        // ToDo throw Exception
+        return false;
+    }
+
+    /**
+     * update user by detach permission
+     * 
+     * @param  User $user
+     * @param  int $permissionId
+     * @return boolean
+     */
+    public static function detachPermission(User $user, int $permissionId)
+    {
+        DB::beginTransaction();
+
+        try {
+            $messages = self::getMessages();
+            $permission = Permission::find($permissionId);
+
+            if(!$permission) {
+                throw new NotFoundException('Permission');
+            }
+
+            $user->permissions()->detach($permission);
+
+            DB::commit();
+
+            return true;
+        } catch (\Exception $e) {
+            DB::rollback();
+            return false;
+        }
+
+        DB::rollback();
+        return false;
+    }
+
+    /**
+     * update user by attach role
+     * 
+     * @param  User $user
+     * @param  int $roleId
+     * @return boolean
+     */
+    public static function attachRole(User $user, int $roleId)
+    {
+        DB::beginTransaction();
+
+        try {
+            $messages = self::getMessages();
+            $role = Role::find($roleId);
+
+            if(!$role) {
+                throw new NotFoundException('Role');
+            }
+
+            $user->roles()->attach($role);
+
+            DB::commit();
+
+            return true;
+        } catch (\Exception $e) {
+            DB::rollback();
+            return false;
+        }
+
+        DB::rollback();
+        return false;
+    }
+
+    /**
+     * update user by detach role
+     * 
+     * @param  User $user
+     * @param  int $roleId
+     * @return boolean
+     */
+    public static function detachRole(User $user, int $roleId)
+    {
+        DB::beginTransaction();
+
+        try {
+            $messages = self::getMessages();
+            $role = Role::find($roleId);
+
+            if(!$role) {
+                throw new NotFoundException('Role');
+            }
+
+            $user->roles()->detach($role);
+
+            DB::commit();
+
+            return true;
+        } catch (\Exception $e) {
+            DB::rollback();
+            return false;
+        }
+
+        DB::rollback();
         return false;
     }
 

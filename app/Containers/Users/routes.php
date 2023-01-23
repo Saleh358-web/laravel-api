@@ -26,8 +26,17 @@ Route::group([
         // Users
         Route::get('/', [UsersController::class, 'get'])->name('users.get');
 
-        // Add permission to user
-        Route::put('addPermissionsToUser', [UsersController::class, 'addPermissionsToUser'])->name('users.addPermissionsToUser');
+        // Add / Remove permissions to user
+        Route::put('addPermissionsToUser', [UsersController::class, 'addPermissionsToUser'])
+        ->name('users.addPermissionsToUser');
+        Route::put('removePermissionsToUser', [UsersController::class, 'removePermissionsToUser'])
+        ->name('users.addPermissionsToUser');
+
+        // Add / Remove roles to user
+        Route::put('addRolesToUser', [UsersController::class, 'addRolesToUser'])
+        ->name('users.addRolesToUser');
+        Route::put('removeRolesToUser', [UsersController::class, 'removeRolesToUser'])
+        ->name('users.addRolesToUser');
     });
 
 });

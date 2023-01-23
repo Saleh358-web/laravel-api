@@ -8,12 +8,12 @@ trait UsersValidators
 {
     /*
      * Get a validator for an incoming
-     * add permissions to user request.
+     * add/remove permissions to user request.
      *
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    public function add_permissions_to_user(array $data)
+    public function permissions_user(array $data)
     {
         $rules = [
             'user_id' => 'required|exists:users,id',
@@ -24,4 +24,21 @@ trait UsersValidators
         return Validator::make($data, $rules);
     }
 
+    /*
+     * Get a validator for an incoming
+     * add/remove roles to user request.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    public function roles_user(array $data)
+    {
+        $rules = [
+            'user_id' => 'required|exists:users,id',
+            'roles' => 'required',
+            'roles.*' => 'required|exists:roles,id',
+        ];
+
+        return Validator::make($data, $rules);
+    }
 }

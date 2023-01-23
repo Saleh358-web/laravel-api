@@ -24,8 +24,13 @@ trait Messages
                 'get' => 'Users found',
                 'get_error' => 'Unable to get users',
                 'attach_permissions' => 'Permissions added successfully',
+                'detach_permissions' => 'Permissions removed successfully',
                 'attach_permissions_failed' => 'Attach permissions failed',
                 'attach_permissions_not_allowed' => 'This user is not allowed to attach/detach permissions',
+                'attach_roles' => 'Roles added successfully',
+                'detach_roles' => 'Roles removed successfully',
+                'attach_roles_failed' => 'Attach roles failed',
+                'attach_roles_not_allowed'  => 'This user is not allowed to attach/detach roles',
             ],
             'email_exists' => 'Email already exists'
         ];
