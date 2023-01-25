@@ -59,6 +59,20 @@ class UserHelper
     }
 
     /**
+     * This function returns the current authenticated user profile information
+     * 
+     * @return User $user
+     */
+    public static function profile()
+    {
+        $user = Auth::user()->load(['roles', 'profileImage']);
+
+        $user->profileImage->link = StoreHelper::getFileLink($user->profileImage->link);
+
+        return $user;
+    }
+
+    /**
      * get all users
      * 
      * @param int $paginationCount
@@ -70,7 +84,15 @@ class UserHelper
             $messages = self::getMessages();
             $paginationCount = ConstantsHelper::getPagination($paginationCount);
 
-            $users = User::with(['roles', 'permissions'])->paginate($paginationCount);
+            $users = User::with(['roles', 'permissions', 'profileImage'])
+            ->paginate($paginationCount);
+
+            foreach($users as $user) {
+                if($user->profileImage) {
+                    $user->profileImage->link = StoreHelper::getFileLink($user->profileImage->link);
+                }
+            }
+            
             $users = json_decode(json_encode($users)); // This will change its type to StdClass
 
             return $users;

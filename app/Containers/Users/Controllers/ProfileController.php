@@ -32,7 +32,7 @@ class ProfileController extends Controller
     {
         try {
             $info = [
-                'user' => Auth::user()
+                'user' => UserHelper::profile()
             ];
 
             return $this->return_response(
@@ -71,7 +71,7 @@ class ProfileController extends Controller
             $updateUser = UserHelper::update($user, $data);
 
             $data = [
-                'user' => $updateUser
+                'user' => UserHelper::profile()
             ];
 
             return $this->return_response(
@@ -153,7 +153,7 @@ class ProfileController extends Controller
 
             return $this->return_response(
                 200,
-                ['link' => StoreHelper::getFileLink($image->link)],
+                ['user' => UserHelper::profile()],
                 $this->messages['profile']['update']
             );
         } catch (Exception $e) {
