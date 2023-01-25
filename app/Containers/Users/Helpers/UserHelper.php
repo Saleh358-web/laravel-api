@@ -6,6 +6,7 @@ use Auth;
 use App\Models\Role;
 use App\Models\Permission;
 use App\Models\User;
+use App\Models\Image;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\ConstantsHelper;
@@ -19,6 +20,7 @@ use App\Containers\Users\Exceptions\SameOldPasswordException;
 use App\Containers\Users\Exceptions\UpdatePasswordFailedException;
 use App\Containers\Users\Messages\Messages;
 use App\Containers\Users\Helpers\UserRolesHelper;
+use App\Helpers\Storage\StoreHelper;
 use Exception;
 
 class UserHelper
@@ -199,6 +201,57 @@ class UserHelper
 
         DB::rollback();
         throw new UpdatePasswordFailedException();
+    }
+
+    /**
+     * This function updates the profile photo of the user
+     * 
+     * @param User $user
+     * @param $photo
+     * @param $photoSize
+     * @return Image $image | UpdateFailedException
+     */
+    public static function updateProfilePhoto(User $user, $photo, $photoSize = null)
+    {
+        DB::beginTransaction();
+        try {
+            $messages = self::getMessages();
+
+            $subPath = 'uploads/images/users/' . $user->id;
+
+            $path = StoreHelper::storeFile($photo, $subPath);
+
+            $image = $user->profileImage()->first();
+
+            if($image) {
+                StoreHelper::deleteFile($image->link);
+                $image->link = $path;
+                $image->size = $photoSize;
+                $image->save();
+            } else {
+                $image = Image::create([
+                    'link' => $path,
+                    'size' => $photoSize
+                ]);
+            }
+
+            $user->profile_image = $image->id;
+            $user->save();
+
+            DB::commit();
+
+            return $image;
+        } catch (Exception $e) {
+            print_r($e->getMessage());
+            DB::rollback();
+            if($e->getMessage() != null) {
+                // We have a normal exception
+                throw new UpdateFailedException($messages['profile']['exception']);
+            }
+            throw $e;
+        }
+
+        throw new UpdateFailedException($messages['profile']['exception']);
     }
 
     /**

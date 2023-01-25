@@ -2,7 +2,9 @@
 
 namespace  App\Models;
 
-class Image extends Authenticatable
+use Illuminate\Database\Eloquent\Model;
+
+class Image extends Model
 {
     /**
      * The attributes that are mass assignable.

@@ -61,4 +61,19 @@ trait ProfileValidators
 
         return Validator::make($data, $rules);
     }
+
+    /**
+     * Get a validator for an incoming update user's profile photo request.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    public function update_profile_photo_validator(array $data)
+    {
+        $rules = [
+            'photo' => 'required|mimes:jpeg,png,jpg',
+        ];
+
+        return Validator::make($data, $rules);
+    }
 }

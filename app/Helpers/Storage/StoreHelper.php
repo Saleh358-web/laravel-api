@@ -82,6 +82,27 @@ class StoreHelper
     }
 
     /**
+     * This function receives the sub path of a file 
+     * and deletes it from local storage, and returns true if deleted
+     * 
+     * @param string $path
+     * @return boolean | GetFileFailedException | NotFoundException
+     */
+    public static function deleteFile(string $path = '')
+    {
+        if(!$path || $path =='') {
+            throw new GetFileFailedException(self::getFileType());
+        }
+
+        if(!File::exists($path)) {
+            throw new NotFoundException(self::getFileType());
+        }
+
+        File::delete($path);
+        return true;
+    }
+
+    /**
      * This function receives a file original name
      * then it returns a proper name for it to be saved
      * 

@@ -143,17 +143,17 @@ class ProfileController extends Controller
     {
         try {
             $data = $request->all();
-            // $this->update_validator($data)->validate();
+            $this->update_profile_photo_validator($data)->validate();
 
             $user = Auth::user();
 
-            $subPath = 'uploads/images/users/' . $user->id;
+            $photo = $request->file('photo');
 
-            $path = StoreHelper::storeFile($request->file('photo'), $subPath);
+            $image = UserHelper::updateProfilePhoto($user, $photo, $request->file('photo')->getSize());
 
             return $this->return_response(
                 200,
-                ['link' => StoreHelper::getFileLink($path)],
+                ['link' => StoreHelper::getFileLink($image->link)],
                 $this->messages['profile']['update']
             );
         } catch (Exception $e) {
