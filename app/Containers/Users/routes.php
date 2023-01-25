@@ -15,6 +15,9 @@ Route::group([
     Route::get('/profile', [ProfileController::class, 'get'])->name('profile.get');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
+    // Profile Photo
+    Route::post('/profile_image', [ProfileController::class, 'updatePhoto'])->name('profile.photo.upload');
+
     // Password
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
     

@@ -21,8 +21,12 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->timestamp('password_updated_at')->nullable();
+            $table->boolean('active')->default(true);
+            $table->unsignedBigInteger('profile_image')->nullable();
             $table->rememberToken();
             $table->timestamps();
+
+            $table->foreign('profile_image')->references('id')->on('images')->onDelete('cascade');
         });
     }
 
@@ -33,6 +37,9 @@ return new class extends Migration
      */
     public function down()
     {
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropForeign(['profile_image']);
+        });
         Schema::dropIfExists('users');
     }
 };

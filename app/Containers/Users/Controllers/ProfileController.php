@@ -8,6 +8,7 @@ use App\Containers\Users\Messages\Messages;
 use App\Containers\Users\Validators\ProfileValidators;
 use App\Helpers\Response\ResponseHelper;
 use App\Containers\Users\Helpers\UserHelper;
+use App\Helpers\Storage\StoreHelper;
 use Exception;
 use Auth;
 
@@ -129,6 +130,43 @@ class ProfileController extends Controller
             405,
             [],
             $this->messages['profile']['password_error']
+        );
+    }
+
+    /**
+     * Uploads profile photo
+     * 
+     * @param  Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function updatePhoto(Request $request)
+    {
+        try {
+            $data = $request->all();
+            // $this->update_validator($data)->validate();
+
+            $user = Auth::user();
+
+            $path = StoreHelper::storeFile($request->file('photo'), 'images/users/' . $user->id);
+
+            return $this->return_response(
+                200,
+                ['link' => asset($path)],
+                $this->messages['profile']['update']
+            );
+        } catch (Exception $e) {
+            return $this->return_response(
+                405,
+                [],
+                $this->messages['profile']['update_error'],
+                $this->exception_message($e)
+            );
+        }
+
+        return $this->return_response(
+            405,
+            [],
+            $this->messages['profile']['update_error']
         );
     }
 }

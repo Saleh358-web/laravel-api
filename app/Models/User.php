@@ -22,7 +22,9 @@ class User extends Authenticatable
         'last_name',
         'email',
         'password',
-        'password_updated_at'
+        'password_updated_at',
+        'active',
+        'profile_image'
     ];
 
     /**
@@ -43,4 +45,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function profileImage()
+    {
+        return $this->belongsTo(Image::class, 'profile_image');
+    }
 }
