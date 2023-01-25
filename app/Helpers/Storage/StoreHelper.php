@@ -3,7 +3,10 @@
 namespace App\Helpers\Storage;
 
 use App\Exceptions\Common\SaveFileFailedException;
+use App\Exceptions\Common\GetFileFailedException;
+use App\Exceptions\Common\NotFoundException;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Exception;
@@ -56,6 +59,26 @@ class StoreHelper
         }
 
         throw new SaveFileFailedException(self::getFileType($ext));
+    }
+
+    /**
+     * This function receives the sub path of a file 
+     * and it returns its full link form local storage
+     * 
+     * @param string $path
+     * @return string asset($path) | GetFileFailedException | NotFoundException
+     */
+    public static function getFileLink(string $path = '')
+    {
+        if(!$path || $path =='') {
+            throw new GetFileFailedException(self::getFileType());
+        }
+
+        if(!File::exists($path)) {
+            throw new NotFoundException(self::getFileType());
+        }
+
+        return asset($path);
     }
 
     /**

@@ -147,11 +147,13 @@ class ProfileController extends Controller
 
             $user = Auth::user();
 
-            $path = StoreHelper::storeFile($request->file('photo'), 'uploads/images/users/' . $user->id);
+            $subPath = 'uploads/images/users/' . $user->id;
+
+            $path = StoreHelper::storeFile($request->file('photo'), $subPath);
 
             return $this->return_response(
                 200,
-                ['link' => asset($path)],
+                ['link' => StoreHelper::getFileLink($path)],
                 $this->messages['profile']['update']
             );
         } catch (Exception $e) {

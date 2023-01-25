@@ -12,7 +12,8 @@ trait ExceptionMessages
             'CREATE_FAILED' => 'create failed',
             'UPDATE_FAILED' => 'update failed',
             'DELETE_FAILED' => 'delete failed',
-            'FILE_SAVE_FAILED' => 'save failed'
+            'FILE_SAVE_FAILED' => 'save failed',
+            'FILE_GET_FAILED' => 'get failed'
         ];
     }
 }
