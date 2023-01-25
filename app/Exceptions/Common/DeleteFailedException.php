@@ -19,7 +19,7 @@ class UpdateFailedException extends ApplicationException
         $this->name = $name;
         $this->messages = $this->messages();
         $this->message = $this->name == '' ? '' : $this->name . ' ';
-        $this->message .= $this->messages['UPDATE_FAILED'];
+        $this->message .= $this->messages['DELETE_FAILED'];
     }
 
     public function status(): int

@@ -6,7 +6,7 @@ use App\Exceptions\ApplicationException;
 use Illuminate\Http\Response;
 use App\Messages\ExceptionMessages;
 
-class UpdateFailedException extends ApplicationException
+class SaveFileFailedException extends ApplicationException
 {
     use ExceptionMessages;
 
@@ -19,7 +19,7 @@ class UpdateFailedException extends ApplicationException
         $this->name = $name;
         $this->messages = $this->messages();
         $this->message = $this->name == '' ? '' : $this->name . ' ';
-        $this->message .= $this->messages['UPDATE_FAILED'];
+        $this->message .= $this->messages['FILE_SAVE_FAILED'];
     }
 
     public function status(): int

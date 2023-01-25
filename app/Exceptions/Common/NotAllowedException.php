@@ -18,7 +18,7 @@ class NotAllowedException extends ApplicationException
     {
         $this->name = $name;
         $this->messages = $this->messages();
-        $this->message = $this->messages['not_allowed'];
+        $this->message = $this->messages['NOT_ALLOWED'];
         $this->message .= ' ' . $this->name == '' ? '' : $this->name . ' ';
         $this->message = trim($this->message);
     }

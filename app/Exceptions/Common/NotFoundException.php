@@ -19,7 +19,7 @@ class NotFoundException extends ApplicationException
         $this->name = $name;
         $this->messages = $this->messages();
         $this->message = $this->name == '' ? '' : $this->name . ' ';
-        $this->message .= $this->messages['not_found'];
+        $this->message .= $this->messages['NOT_FOUND'];
     }
 
     public function status(): int

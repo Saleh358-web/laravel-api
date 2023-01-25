@@ -10,6 +10,8 @@ class StoreHelper
 {
     public static function storeFile($file, $subPath)
     {
+        $stored = false;
+
         $current_timestamp = Carbon::now()->timestamp;
 
         // Get File Extension
@@ -20,8 +22,16 @@ class StoreHelper
 
         //Move Uploaded File
         $destinationPath = 'storage/uploads/' . $subPath;
-        $file->move($destinationPath, $fileName);
 
-        return $destinationPath . '/' . $fileName;
+        if(env('STORE_IN_LOCAL')) {
+            $file->move($destinationPath, $fileName);
+            $stored = true;
+        }
+
+        $path = $destinationPath . '/' . $fileName;
+
+        if($stored) {
+            return $path;
+        }
     }
 }

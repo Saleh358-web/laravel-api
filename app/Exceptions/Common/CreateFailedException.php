@@ -19,7 +19,7 @@ class CreateFailedException extends ApplicationException
         $this->name = $name;
         $this->messages = $this->messages();
         $this->message = $this->name == '' ? '' : $this->name . ' ';
-        $this->message .= $this->messages['create'];
+        $this->message .= $this->messages['CREATE_FAILED'];
     }
 
     public function status(): int
