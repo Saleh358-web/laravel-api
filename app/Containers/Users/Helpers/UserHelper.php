@@ -21,6 +21,8 @@ use App\Containers\Users\Exceptions\UpdatePasswordFailedException;
 use App\Containers\Users\Messages\Messages;
 use App\Containers\Users\Helpers\UserRolesHelper;
 use App\Helpers\Storage\StoreHelper;
+use App\Helpers\Storage\LocalStore;
+use App\Helpers\Response\CollectionsHelper;
 use Exception;
 
 class UserHelper
@@ -85,13 +87,15 @@ class UserHelper
             $paginationCount = ConstantsHelper::getPagination($paginationCount);
 
             $users = User::with(['roles', 'permissions', 'profileImage'])
-            ->paginate($paginationCount);
-
-            foreach($users as $user) {
+            ->get()->each(function (User $user) {
                 if($user->profileImage) {
                     $user->profileImage->link = StoreHelper::getFileLink($user->profileImage->link);
                 }
-            }
+            });
+
+            $users = collect(LocalStore::get('users', 'users'));
+
+            $users = CollectionsHelper::paginate($users, $paginationCount);
             
             $users = json_decode(json_encode($users)); // This will change its type to StdClass
 
