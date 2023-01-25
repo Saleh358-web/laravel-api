@@ -147,7 +147,7 @@ class ProfileController extends Controller
 
             $user = Auth::user();
 
-            $path = StoreHelper::storeFile($request->file('photo'), 'images/users/' . $user->id);
+            $path = StoreHelper::storeFile($request->file('photo'), 'uploads/images/users/' . $user->id);
 
             return $this->return_response(
                 200,
