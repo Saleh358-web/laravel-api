@@ -10,6 +10,7 @@ use App\Models\Image;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\ConstantsHelper;
+use Illuminate\Support\Facades\Log;
 use App\Exceptions\Common\NotFoundException;
 use App\Exceptions\Common\CreateFailedException;
 use App\Exceptions\Common\UpdateFailedException;
@@ -53,11 +54,12 @@ class UserHelper
             }
 
             return $user;
-        } catch (\Exception $e) {
-            return null;
+        } catch (Exception $e) {
+            Log::error('User not found - UserHelper::id(' . $id . ')');
+            throw new NotFoundException($messages['profile']['exception']);
         }
 
-        return null;
+        throw new NotFoundException($messages['profile']['exception']);
     }
 
     /**
@@ -67,11 +69,20 @@ class UserHelper
      */
     public static function profile()
     {
-        $user = Auth::user()->load(['roles', 'profileImage']);
+        try {
+            $user = Auth::user()->load(['roles', 'profileImage']);
 
-        $user->profileImage->link = StoreHelper::getFileLink($user->profileImage->link);
-
-        return $user;
+            if(isset($user->profileImage)) {
+                $user->profileImage->link = StoreHelper::getFileLink($user->profileImage->link);
+            }
+    
+            Log::info('User profile returned');
+    
+            return $user;
+        } catch (Exception $e) {
+            Log::error('Get user profile failed On UserHelper::profile() with error: ' . $e->getMessage());
+            throw $e;
+        }
     }
 
     /**
@@ -93,14 +104,15 @@ class UserHelper
                 }
             });
 
-            $users = collect(LocalStore::get('users', 'users'));
-
             $users = CollectionsHelper::paginate($users, $paginationCount);
             
             $users = json_decode(json_encode($users)); // This will change its type to StdClass
 
+            Log::info('User returned successfully');
+
             return $users;
         } catch (\Exception $e) {
+            Log::error('Get users failed - UserHelper::getAll()');
             throw $e;
         }
 
@@ -128,9 +140,12 @@ class UserHelper
             ]);
 
             DB::commit();
+
+            Log::info('User created successfully');
             
             return $user;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            Log::error('User create failed on UserHelper::create() with data: ' . json_encode($data));
             DB::rollback();
             throw new CreateFailedException($messages['profile']['exception']);
         }
@@ -169,10 +184,13 @@ class UserHelper
             $user->save();
 
             DB::commit();
+
+            Log::info('User data updated successfully');
             
             $user = User::find($user->id);
             return $user;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            Log::error('User data updated failed - UserHelper::update()');
             DB::rollback();
 
             if($e->getMessage() != null) {
@@ -217,6 +235,7 @@ class UserHelper
 
             return true;
         } catch (\Exception $e) {
+            Log::error('Update password failed - UserHelper::updatePassword');
             DB::rollback();
             if($e->getMessage() != null) {
                 // We have a normal exception
@@ -265,10 +284,10 @@ class UserHelper
             $user->save();
 
             DB::commit();
-
+            Log::info('User profile photo uploaded successfully');
             return $image;
         } catch (Exception $e) {
-            print_r($e->getMessage());
+            Log::error('User profile photo upload failed - UserHelper::updateProfilePhoto()');
             DB::rollback();
             if($e->getMessage() != null) {
                 // We have a normal exception
@@ -312,6 +331,7 @@ class UserHelper
 
             return true;
         } catch (Exception $e) {
+            Log::error('Authorization failed on UserHelper::authorizedToUpdateUserRoles');
             if($e->getMessage() != null) {
                 // We have a normal exception
                 throw new NotAllowedException('roles');
@@ -345,8 +365,10 @@ class UserHelper
 
             DB::commit();
 
+            Log::info('Permission attached successfully');
             return true;
         } catch (\Exception $e) {
+            Log::error('Permission attach failed - UserHelper::attachPermission');
             DB::rollback();
             return false;
         }
@@ -377,9 +399,10 @@ class UserHelper
             $user->permissions()->detach($permission);
 
             DB::commit();
-
+            Log::info('Permission detached successfully');
             return true;
         } catch (\Exception $e) {
+            Log::error('Permission detach failed - UserHelper::detachPermission');
             DB::rollback();
             return false;
         }
@@ -410,9 +433,10 @@ class UserHelper
             $user->roles()->attach($role);
 
             DB::commit();
-
+            Log::info('Role attached successfully');
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            Log::info('Role attach failed - UserHelper::attachRole');
             DB::rollback();
             return false;
         }
@@ -443,9 +467,10 @@ class UserHelper
             $user->roles()->detach($role);
 
             DB::commit();
-
+            Log::info('Role detached successfully');
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            Log::info('Role detach failed - UserHelper::detachRole');
             DB::rollback();
             return false;
         }

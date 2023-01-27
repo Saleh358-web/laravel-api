@@ -3,6 +3,7 @@
 namespace App\Containers\Auth\Helpers;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class UserTokenHelper
 {
@@ -18,6 +19,8 @@ class UserTokenHelper
         $token = $user->tokens->find($token);
         
         $token->revoke();
+
+        Log::info('Token revoked for user');
 
         return true;
     }
