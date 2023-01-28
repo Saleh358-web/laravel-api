@@ -25,6 +25,13 @@ class UserTokenHelper
         return true;
     }
 
+    public static function revoke_all($user)
+    {
+        foreach($user->tokens as $token) {
+            $token->revoke();
+        }
+    }
+
     private static function get_hashing_value()
     {
         return env('APP_NAME') . now();

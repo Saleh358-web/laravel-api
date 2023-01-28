@@ -9,6 +9,7 @@ use App\Containers\Users\Validators\ProfileValidators;
 use App\Helpers\Response\ResponseHelper;
 use App\Containers\Users\Helpers\UserHelper;
 use App\Helpers\Storage\StoreHelper;
+use App\Containers\Auth\Helpers\UserAuthHelper;
 use Exception;
 use Auth;
 
@@ -110,10 +111,14 @@ class ProfileController extends Controller
             $user = Auth::user();
             $updated = UserHelper::updatePassword($user, $data);
 
+            $token = UserAuthHelper::logoutFromAllAndRefreshToken($user);
+
             if($updated) {
                 return $this->return_response(
                     200,
-                    [],
+                    [
+                        'token' => $token
+                    ],
                     $this->messages['profile']['password']
                 );
             }
