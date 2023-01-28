@@ -36,4 +36,26 @@ trait UserLoginValidator
 
         return Validator::make($data, $rules);
     }
+
+    /**
+     * Get a validator for an reset password request.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    public function reset_password_validator(array $data)
+    {
+        $rules = [
+            'email' => 'required|email',
+            'token' => 'required|string',
+            'password' => [
+                'required',
+                'min:6',
+                'regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#@-_%]).*$/',
+                'confirmed'
+            ]
+        ];
+
+        return Validator::make($data, $rules);
+    }
 }

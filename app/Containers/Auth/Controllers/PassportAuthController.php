@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Containers\Auth\Validators\UserLoginValidator;
 use App\Helpers\Response\ResponseHelper;
 use App\Containers\Auth\Helpers\UserAuthHelper;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use App\Containers\Auth\Messages\Messages;
 use Exception;
@@ -107,12 +108,64 @@ class PassportAuthController extends Controller
 
     /**
      * Reset password
-     * Reset password for a user and login
+     * Reset password for a user
      * 
      * @param  Request $request
      * @return \Illuminate\Http\Response
      */
     public function resetPassword(Request $request)
     {
+        $data = $request->all();
+        $this->reset_password_validator($data)->validate();
+
+        $reset_password_status = Password::reset($data, function ($user, $password) {
+            $user->password = Hash::make($password);
+            $user->save();
+        });
+
+        $message = $this->messages['RESET_PASSWORD_FAIL'];
+
+        switch($reset_password_status) {
+            case Password::INVALID_TOKEN: {
+                return $this->return_response(
+                    401,
+                    [],
+                    $message
+                );
+                break;
+            }
+            case Password::INVALID_USER: {
+                return $this->return_response(
+                    400,
+                    [],
+                    $message
+                );
+                break;
+            }
+
+            case Password::PASSWORD_RESET: {
+                $message = $this->messages['RESET_PASSWORD_SUCCESS'];
+                return $this->return_response(
+                    200,
+                    [],
+                    $message
+                );
+                break;
+            }
+            default: {
+                return $this->return_response(
+                    400,
+                    [],
+                    $message
+                );
+                break;
+            }
+        }
+
+        return $this->return_response(
+            400,
+            [],
+            $message
+        );
     }
 }

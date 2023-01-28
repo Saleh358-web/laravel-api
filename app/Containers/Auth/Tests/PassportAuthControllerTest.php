@@ -6,6 +6,7 @@ use Tests\TestDatabaseTrait;
 use Tests\TestCase;
 use App\Containers\Users\Helpers\UserHelper;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Password;
 
 class PassportAuthControllerTest extends TestCase
 {
@@ -196,6 +197,38 @@ class PassportAuthControllerTest extends TestCase
                 'errors' => [
                     'email'
                 ]
+            ]
+        );
+    }
+
+    /**
+     * Test successful forgot password email.
+     *
+     * @return void
+     */
+    public function test_reset_password_successful()
+    {
+        // create a user and set password_resets token
+        $user = $this->createUser();
+        $token = Password::createToken($user);
+
+        $newPassword = 'New1#Password';
+
+        $response = $this->json(
+            'POST',
+            '/api/v1/resetPassword',
+            [
+                'email' => $user->email,
+                'token' => $token,
+                'password' => $newPassword,
+                'password_confirmation' => $newPassword
+            ],
+            [
+                'Accept' => 'application/json',
+            ])
+            ->assertStatus(200)->assertJsonStructure([
+                'status',
+                'message',
             ]
         );
     }
