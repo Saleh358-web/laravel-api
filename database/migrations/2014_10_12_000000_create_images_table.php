@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('link');
             $table->bigInteger('size')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

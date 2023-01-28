@@ -24,6 +24,7 @@ return new class extends Migration
             $table->boolean('active')->default(true);
             $table->unsignedBigInteger('profile_image')->nullable();
             $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('profile_image')->references('id')->on('images')->onDelete('cascade');

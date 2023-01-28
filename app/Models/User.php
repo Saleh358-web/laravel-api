@@ -8,10 +8,11 @@ use Illuminate\Notifications\Notifiable;
 use App\Permissions\HasPermissionsTrait;
 use Laravel\Passport\HasApiTokens;
 use App\Containers\Auth\Notifications\ResetPasswordEmail;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable, HasPermissionsTrait;
+    use HasApiTokens, Notifiable, HasPermissionsTrait, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
