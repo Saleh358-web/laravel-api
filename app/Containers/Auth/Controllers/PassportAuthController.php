@@ -39,19 +39,19 @@ class PassportAuthController extends Controller
             $info = UserAuthHelper::login($user_data);
             
             if($info == null) {
-                return $this->return_response(401, [], $this->messages['login_failed']);
+                return $this->return_response(401, [], $this->messages['LOGIN_FAILED']);
             }
         
             return $this->return_response(
                 200,
                 $info,
-                $this->messages['login_success']
+                $this->messages['LOGIN_SUCCESS']
             );
         } catch (Exception $e) {
-            return $this->return_response(405, [], $this->messages['login_failed'], $e->getMessage());
+            return $this->return_response(405, [], $this->messages['LOGIN_FAILED'], $e->getMessage());
         }
 
-        return $this->return_response(405, [], $this->messages['login_failed']);
+        return $this->return_response(405, [], $this->messages['LOGIN_FAILED']);
     }
 
     /**
@@ -69,14 +69,14 @@ class PassportAuthController extends Controller
                 return $this->return_response(
                     200,
                     [],
-                    $this->messages['logout_success']
+                    $this->messages['LOGOUT_SUCCESS']
                 );
             }
         } catch (Exception $e) {
-            return $this->return_response(400, [], $this->messages['logout_failed'], $e->getMessage());
+            return $this->return_response(400, [], $this->messages['LOGOUT_FAILED'], $e->getMessage());
         }
 
-        return $this->return_response(400, [], $this->messages['logout_failed']);
+        return $this->return_response(400, [], $this->messages['LOGOUT_FAILED']);
     }
 
     /**
@@ -94,7 +94,7 @@ class PassportAuthController extends Controller
         $response = Password::sendResetLink($data);
         
         $message = $response == Password::RESET_LINK_SENT ? 
-        $this->messages['forgot_email_sent'] : $this->messages['forgot_email_fail'];
+        $this->messages['FORGOT_EMAIL_SUCCESS'] : $this->messages['FORGOT_EMAIL_FAIL'];
 
         $status = $response == Password::RESET_LINK_SENT ? 200 : 400;
 

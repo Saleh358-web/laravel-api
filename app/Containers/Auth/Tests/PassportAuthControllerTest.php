@@ -140,11 +140,13 @@ class PassportAuthControllerTest extends TestCase
      */
     public function test_forgot_password_email_successful()
     {
+        $user = $this->createUser();
+
         $response = $this->json(
             'POST',
             '/api/v1/forgotPassword',
             [
-                'email' => 'test@example.com'
+                'email' => $user->email
             ],
             [
                 'Accept' => 'application/json',
@@ -152,6 +154,48 @@ class PassportAuthControllerTest extends TestCase
             ->assertStatus(200)->assertJsonStructure([
                 'status',
                 'message'
+            ]
+        );
+    }
+
+    /**
+     * Test fail forgot password email.
+     *
+     * @return void
+     */
+    public function test_forgot_password_email_fail()
+    {
+        // Wrong email error
+        $response = $this->json(
+            'POST',
+            '/api/v1/forgotPassword',
+            [
+                'email' => 'wrong_email@example.com'
+            ],
+            [
+                'Accept' => 'application/json',
+            ])
+            ->assertStatus(400)->assertJsonStructure([
+                'status',
+                'message',
+                'error'
+            ]
+        );
+
+        // validation no email error
+        $response = $this->json(
+            'POST',
+            '/api/v1/forgotPassword',
+            [
+            ],
+            [
+                'Accept' => 'application/json',
+            ])
+            ->assertStatus(422)->assertJsonStructure([
+                'message',
+                'errors' => [
+                    'email'
+                ]
             ]
         );
     }
