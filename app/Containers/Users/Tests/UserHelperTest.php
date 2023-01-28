@@ -17,6 +17,7 @@ use Illuminate\Support\Str;
 use App\Helpers\ConstantsHelper;
 use App\Helpers\Response\CollectionsHelper;
 use App\Models\User;
+use Illuminate\Http\Testing\File;
 use Auth;
 
 class UserHelperTest extends TestCase
@@ -328,6 +329,40 @@ class UserHelperTest extends TestCase
         $updated = UserHelper::updatePassword($user, $data);
 
         $this->assertException($result, 'UpdatePasswordFailedException');
+    }
+
+    /**
+     * Test update profile photo successful.
+     *
+     * @return void
+     */
+    public function test_update_profile_photo_successful()
+    {
+        $image = File::image('image.png', 400, 100);
+        $userData = $this->getUserData();
+        $user = UserHelper::create($userData);
+
+        // Result should be the newly created image model App\Models\Image
+        $result = UserHelper::updateProfilePhoto($user, $image);
+
+        $user = User::find($user->id);
+        $this->assertEquals($user->profile_image, $result->id);
+    }
+
+    /**
+     * Test update profile photo fail.
+     *
+     * @return void
+     */
+    public function test_update_profile_photo_fail()
+    {
+        $userData = $this->getUserData();
+        $user = UserHelper::create($userData);
+
+        $this->expectException(UpdateFailedException::class);
+        $result = UserHelper::updateProfilePhoto($user, null);
+
+        $this->assertException($result, 'UpdateFailedException');
     }
 
     private function getUserData()
