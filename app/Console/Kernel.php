@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('passport:purge')->weekly()->mondays()->at('13:00');
+        $schedule->command('auth:clear-resets')->everyFifteenMinutes();
     }
 
     /**

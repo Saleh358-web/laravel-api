@@ -132,4 +132,27 @@ class PassportAuthControllerTest extends TestCase
             'message',
         ]);
     }
+
+    /**
+     * Test successful forgot password email.
+     *
+     * @return void
+     */
+    public function test_forgot_password_email_successful()
+    {
+        $response = $this->json(
+            'POST',
+            '/api/v1/forgotPassword',
+            [
+                'email' => 'test@example.com'
+            ],
+            [
+                'Accept' => 'application/json',
+            ])
+            ->assertStatus(200)->assertJsonStructure([
+                'status',
+                'message'
+            ]
+        );
+    }
 }

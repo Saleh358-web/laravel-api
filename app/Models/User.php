@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Permissions\HasPermissionsTrait;
 use Laravel\Passport\HasApiTokens;
+use App\Containers\Auth\Notifications\ResetPasswordEmail;
 
 class User extends Authenticatable
 {
@@ -49,5 +50,10 @@ class User extends Authenticatable
     public function profileImage()
     {
         return $this->belongsTo(Image::class, 'profile_image');
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordEmail($token, $this->email));
     }
 }

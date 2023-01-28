@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Containers\Auth\Validators\UserLoginValidator;
 use App\Helpers\Response\ResponseHelper;
 use App\Containers\Auth\Helpers\UserAuthHelper;
+use Illuminate\Support\Facades\Password;
 use App\Containers\Auth\Messages\Messages;
 use Exception;
 
@@ -76,5 +77,42 @@ class PassportAuthController extends Controller
         }
 
         return $this->return_response(400, [], $this->messages['logout_failed']);
+    }
+
+    /**
+     * Forgot password
+     * Send a reset password email to user
+     * 
+     * @param  Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function forgotPassword(Request $request)
+    {
+        $data = $request->all();
+        $this->forgot_password_validator($data)->validate();
+
+        $response = Password::sendResetLink($data);
+        
+        $message = $response == Password::RESET_LINK_SENT ? 
+        $this->messages['forgot_email_sent'] : $this->messages['forgot_email_fail'];
+
+        $status = $response == Password::RESET_LINK_SENT ? 200 : 400;
+
+        return $this->return_response(
+            $status,
+            [],
+            $message
+        );
+    }
+
+    /**
+     * Reset password
+     * Reset password for a user and login
+     * 
+     * @param  Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function resetPassword(Request $request)
+    {
     }
 }
