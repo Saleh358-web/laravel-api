@@ -11,15 +11,102 @@ use App\Containers\Users\Exceptions\DuplicateEmailException;
 use App\Containers\Users\Exceptions\OldPasswordException;
 use App\Containers\Users\Exceptions\SameOldPasswordException;
 use App\Containers\Users\Exceptions\UpdatePasswordFailedException;
+use App\Exceptions\Common\NotFoundException;
+use App\Helpers\Tests\TestsFacilitator;
 use Illuminate\Support\Str;
+use App\Helpers\ConstantsHelper;
+use App\Helpers\Response\CollectionsHelper;
 use App\Models\User;
+use Auth;
 
 class UserHelperTest extends TestCase
 {
+    use TestsFacilitator;
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->withoutExceptionHandling();
+    }
+
+    /**
+     * Test successful id.
+     *
+     * @return void
+     */
+    public function test_id_successful()
+    {
+        $userData = $this->getUserData();
+        $user = UserHelper::create($userData);
+        $userId = $user->id;
+
+        $user = User::find($userId);
+        $userGot = UserHelper::id($userId);
+
+        $this->assertEquals($user, $userGot);
+    }
+
+    /**
+     * Test fail id.
+     *
+     * @return void
+     */
+    public function test_id_fail()
+    {
+        $this->expectException(NotFoundException::class);
+
+        $userGot = UserHelper::id(53123215);
+
+        $this->assertException($result, 'NotFoundException');
+    }
+
+    /**
+     * Test successful profile.
+     *
+     * @return void
+     */
+    public function test_profile_successful()
+    {
+        $userCreatedWithRaw = $this->createUser();
+        $user = $userCreatedWithRaw['user'];
+        $content = $this->login(null, $userCreatedWithRaw['userRawData']);
+
+        $profile = UserHelper::profile();
+        $user = Auth::user()->load(['roles', 'profileImage']);
+        $this->assertEquals($user, $profile);
+    }
+
+    /**
+     * Test fail profile.
+     *
+     * @return void
+     */
+    public function test_profile_fail()
+    {
+        $this->expectException(NotFoundException::class);
+        $profile = UserHelper::profile();
+        $this->assertException($result, 'NotFoundException');
+    }
+
+    /**
+     * Test successful getAll.
+     *
+     * @return void
+     */
+    public function test_getAll_successful()
+    {
+        $paginationCount = ConstantsHelper::getPagination(null);
+        $users = User::with(['roles', 'permissions', 'profileImage'])
+        ->get()->each(function (User $user) {
+            if($user->profileImage) {
+                $user->profileImage->link = StoreHelper::getFileLink($user->profileImage->link);
+            }
+        });
+        $users = CollectionsHelper::paginate($users, $paginationCount);
+        $users = json_decode(json_encode($users));
+
+        $result = UserHelper::getAll();
+        $this->assertEquals($users, $result);
     }
 
     /**

@@ -70,7 +70,13 @@ class UserHelper
     public static function profile()
     {
         try {
-            $user = Auth::user()->load(['roles', 'profileImage']);
+            $user = Auth::user();
+
+            if(!$user || $user == null) {
+                throw new NotFoundException('User');
+            }
+
+            $user = $user->load(['roles', 'profileImage']);
 
             if(isset($user->profileImage)) {
                 $user->profileImage->link = StoreHelper::getFileLink($user->profileImage->link);
@@ -80,7 +86,7 @@ class UserHelper
     
             return $user;
         } catch (Exception $e) {
-            Log::error('Get user profile failed On UserHelper::profile() with error: ' . $e->getMessage());
+            Log::error('Get user profile failed - UserHelper::profile()');
             throw $e;
         }
     }
