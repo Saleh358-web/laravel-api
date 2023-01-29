@@ -71,7 +71,7 @@ trait ProfileValidators
     public function update_profile_photo_validator(array $data)
     {
         $rules = [
-            'photo' => 'required|mimes:jpeg,png,jpg',
+            'photo' => 'nullable|mimes:jpeg,png,jpg',
         ];
 
         return Validator::make($data, $rules);

@@ -154,7 +154,11 @@ class ProfileController extends Controller
 
             $photo = $request->file('photo');
 
-            $image = UserHelper::updateProfilePhoto($user, $photo, $request->file('photo')->getSize());
+            if($photo == null) {
+                UserHelper::updateProfilePhoto($user, $photo); // this should delete the user's photo
+            } else {
+                $image = UserHelper::updateProfilePhoto($user, $photo, $request->file('photo')->getSize());
+            }
 
             return $this->return_response(
                 200,

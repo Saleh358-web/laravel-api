@@ -270,23 +270,32 @@ class UserHelper
 
             $subPath = 'uploads/images/users/' . $user->id;
 
-            $path = StoreHelper::storeFile($photo, $subPath);
-
             $image = $user->profileImage()->first();
 
-            if($image) {
-                StoreHelper::deleteFile($image->link);
-                $image->link = $path;
-                $image->size = $photoSize;
-                $image->save();
-            } else {
-                $image = Image::create([
-                    'link' => $path,
-                    'size' => $photoSize
-                ]);
-            }
+            if($photo != null) {
+                $path = StoreHelper::storeFile($photo, $subPath);
 
-            $user->profile_image = $image->id;
+                if($image) {
+                    StoreHelper::deleteFile($image->link);
+                    $image->link = $path;
+                    $image->size = $photoSize;
+                    $image->save();
+                } else {
+                    $image = Image::create([
+                        'link' => $path,
+                        'size' => $photoSize
+                    ]);
+                }
+    
+                $user->profile_image = $image->id;
+            } else {
+                if($image) {
+                    StoreHelper::deleteFile($image->link);
+                    $image->delete();
+                }
+                $user->profile_image = null;
+            }
+            
             $user->save();
 
             DB::commit();
