@@ -17,11 +17,11 @@ class DuplicateEmailException extends ApplicationException
 
     public function help(): string
     {
-        return trans($this->messages()['email_exists']);
+        return trans($this->messages()['EMAIL_EXISTS']);
     }
 
     public function error(): string
     {
-        return trans($this->messages()['email_exists']);
+        return trans($this->messages()['EMAIL_EXISTS']);
     }
 }

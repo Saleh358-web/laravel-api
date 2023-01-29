@@ -7,32 +7,34 @@ trait Messages
     public function messages()
     {
         return [
-            'profile' => [
-                'get' => 'Returned Profile',
-                'get_error' => 'Unable to get user profile',
-                'exception' => 'User profile',
-                'update_error' => 'User profile update failed',
-                'update' => 'User profile updated successfully',
-                'create_error' => 'Create user failed',
-                'create' => 'User created successfully',
-                'password' => 'Password updated successfully',
-                'password_error' => 'Password updated failed. The password should have at least 6 characters, 1 capital letter, 1 number and 1 special character',
-                'old_password_error' => 'Old password is incorrect',
-                'old_password_equal_new' => 'Password shouldn\'t be the same as the old one',
+            'PROFILE' => [
+                'GET' => 'Returned Profile',
+                'GET_ERROR' => 'Unable to get user profile',
+                'EXCEPTION' => 'User profile',
+                'UPDATE_ERROR' => 'User profile update failed',
+                'UPDATE_SUCCESS' => 'User profile updated successfully',
+                'CREATE_ERROR' => 'Create user failed',
+                'CREATE_SUCCESS' => 'User created successfully',
+                'PASSWORD' => 'Password updated successfully',
+                'PASSWORD_ERROR' => 'Password updated failed. The password should have at least 6 characters, 1 capital letter, 1 number and 1 special character',
+                'OLD_PASSWORD_ERROR' => 'Old password is incorrect',
+                'OLD_PASSWORD_ERROR_EQUAL_NEW' => 'Password shouldn\'t be the same as the old one',
             ],
-            'users' => [
-                'get' => 'Users found',
-                'get_error' => 'Unable to get users',
-                'attach_permissions' => 'Permissions added successfully',
-                'detach_permissions' => 'Permissions removed successfully',
-                'attach_permissions_failed' => 'Attach permissions failed',
-                'attach_permissions_not_allowed' => 'This user is not allowed to attach/detach permissions',
-                'attach_roles' => 'Roles added successfully',
-                'detach_roles' => 'Roles removed successfully',
-                'attach_roles_failed' => 'Attach roles failed',
-                'attach_roles_not_allowed'  => 'This user is not allowed to attach/detach roles',
+            'USERS' => [
+                'GET' => 'Users found',
+                'GET_ERROR' => 'Unable to get users',
+                'ATTACH_PERMISSIONS' => 'Permissions added successfully',
+                'ATTACH_PERMISSIONS_FAILED' => 'Attach permissions failed',
+                'ATTACH_PERMISSIONS_NOT_ALLOWED' => 'This user is not allowed to attach/detach permissions',
+                'DETACH_PERMISSIONS' => 'Permissions removed successfully',
+                'DETACH_PERMISSIONS_FAILED' => 'Detach permissions failed',
+                'ATTACH_ROLES' => 'Roles added successfully',
+                'ATTACH_ROLES_FAILED' => 'Roles attach failed',
+                'DETACH_ROLES' => 'Roles removed successfully',
+                'DETACH_ROLES_FAILED' => 'Detach roles failed',
+                'ATTACH_ROLES_NOT_ALLOWED'  => 'This user is not allowed to attach/detach roles',
             ],
-            'email_exists' => 'Email already exists'
+            'EMAIL_EXISTS' => 'Email already exists'
         ];
     }
 }

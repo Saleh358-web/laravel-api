@@ -17,11 +17,11 @@ class UpdatePasswordFailedException extends ApplicationException
 
     public function help(): string
     {
-        return trans($this->messages()['profile']['password_error']);
+        return trans($this->messages()['PROFILE']['PASSWORD_ERROR']);
     }
 
     public function error(): string
     {
-        return trans($this->messages()['profile']['password_error']);
+        return trans($this->messages()['PROFILE']['PASSWORD_ERROR']);
     }
 }

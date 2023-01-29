@@ -50,16 +50,16 @@ class UserHelper
             $user = User::find($id);
 
             if(!$user) {
-                throw new NotFoundException($messages['profile']['exception']);
+                throw new NotFoundException($messages['PROFILE']['EXCEPTION']);
             }
 
             return $user;
         } catch (Exception $e) {
             Log::error('User not found - UserHelper::id(' . $id . ')');
-            throw new NotFoundException($messages['profile']['exception']);
+            throw new NotFoundException($messages['PROFILE']['EXCEPTION']);
         }
 
-        throw new NotFoundException($messages['profile']['exception']);
+        throw new NotFoundException($messages['PROFILE']['EXCEPTION']);
     }
 
     /**
@@ -153,11 +153,11 @@ class UserHelper
         } catch (Exception $e) {
             Log::error('User create failed on UserHelper::create() with data: ' . json_encode($data));
             DB::rollback();
-            throw new CreateFailedException($messages['profile']['exception']);
+            throw new CreateFailedException($messages['PROFILE']['EXCEPTION']);
         }
 
         DB::rollback();
-        throw new CreateFailedException($messages['profile']['exception']);
+        throw new CreateFailedException($messages['PROFILE']['EXCEPTION']);
     }
     
     /**
@@ -201,13 +201,13 @@ class UserHelper
 
             if($e->getMessage() != null) {
                 // We have a normal exception
-                throw new UpdateFailedException($messages['profile']['exception']);
+                throw new UpdateFailedException($messages['PROFILE']['EXCEPTION']);
             }
             throw $e;
         }
 
         DB::rollback();
-        throw new UpdateFailedException($messages['profile']['exception']);
+        throw new UpdateFailedException($messages['PROFILE']['EXCEPTION']);
     }
 
     /**
@@ -297,12 +297,12 @@ class UserHelper
             DB::rollback();
             if($e->getMessage() != null) {
                 // We have a normal exception
-                throw new UpdateFailedException($messages['profile']['exception']);
+                throw new UpdateFailedException($messages['PROFILE']['EXCEPTION']);
             }
             throw $e;
         }
 
-        throw new UpdateFailedException($messages['profile']['exception']);
+        throw new UpdateFailedException($messages['PROFILE']['EXCEPTION']);
     }
 
     /**

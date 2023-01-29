@@ -39,20 +39,20 @@ class ProfileController extends Controller
             return $this->return_response(
                 200,
                 $info,
-                $this->messages['profile']['get']
+                $this->messages['PROFILE']['GET']
             );
         } catch (Exception $e) {
             return $this->return_response(
                 405,
                 [],
-                $this->messages['profile']['get_error'],
+                $this->messages['PROFILE']['GET_ERROR'],
                 $this->exception_message($e)
             );
         }
         return $this->return_response(
             405,
             [],
-            $this->messages['profile']['get_error']
+            $this->messages['PROFILE']['GET_ERROR']
         );
     }
 
@@ -78,13 +78,13 @@ class ProfileController extends Controller
             return $this->return_response(
                 200,
                 $data,
-                $this->messages['profile']['update']
+                $this->messages['PROFILE']['UPDATE_SUCCESS']
             );
         } catch (Exception $e) {
             return $this->return_response(
                 405,
                 [],
-                $this->messages['profile']['update_error'],
+                $this->messages['PROFILE']['UPDATE_ERROR'],
                 $this->exception_message($e)
             );
         }
@@ -92,7 +92,7 @@ class ProfileController extends Controller
         return $this->return_response(
             405,
             [],
-            $this->messages['profile']['update_error']
+            $this->messages['PROFILE']['UPDATE_ERROR']
         );
     }
 
@@ -119,14 +119,14 @@ class ProfileController extends Controller
                     [
                         'token' => $token
                     ],
-                    $this->messages['profile']['password']
+                    $this->messages['PROFILE']['PASSWORD']
                 );
             }
         } catch (Exception $e) {
             return $this->return_response(
                 405,
                 [],
-                $this->messages['profile']['password_error'],
+                $this->messages['PROFILE']['PASSWORD_ERROR'],
                 $this->exception_message($e)
             );
         }
@@ -134,7 +134,7 @@ class ProfileController extends Controller
         return $this->return_response(
             405,
             [],
-            $this->messages['profile']['password_error']
+            $this->messages['PROFILE']['PASSWORD_ERROR']
         );
     }
 
@@ -159,13 +159,13 @@ class ProfileController extends Controller
             return $this->return_response(
                 200,
                 ['user' => UserHelper::profile()],
-                $this->messages['profile']['update']
+                $this->messages['PROFILE']['UPDATE_SUCCESS']
             );
         } catch (Exception $e) {
             return $this->return_response(
                 405,
                 [],
-                $this->messages['profile']['update_error'],
+                $this->messages['PROFILE']['UPDATE_ERROR'],
                 $this->exception_message($e)
             );
         }
@@ -173,7 +173,7 @@ class ProfileController extends Controller
         return $this->return_response(
             405,
             [],
-            $this->messages['profile']['update_error']
+            $this->messages['PROFILE']['UPDATE_ERROR']
         );
     }
 }
