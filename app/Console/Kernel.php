@@ -7,6 +7,15 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
+     /**
+     * The Artisan commands provided by your application.
+     *
+     * @var array
+     */
+    protected $commands = [
+        Commands\DeleteOldData::class,
+    ];
+
     /**
      * Define the application's command schedule.
      *
@@ -18,6 +27,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         $schedule->command('passport:purge')->weekly()->mondays()->at('13:00');
         $schedule->command('auth:clear-resets')->everyFifteenMinutes();
+        $schedule->command('delete:olds')->daily()->at('00:00');
     }
 
     /**
