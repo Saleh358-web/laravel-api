@@ -39,6 +39,7 @@ class UserHelper
 
     /**
      * get user base info (only from users table)
+     * by id
      * 
      * @param int $id
      * @return User $user
@@ -56,6 +57,31 @@ class UserHelper
             return $user;
         } catch (Exception $e) {
             Log::error('User not found - UserHelper::id(' . $id . ')');
+            throw new NotFoundException($messages['PROFILE']['EXCEPTION']);
+        }
+
+        throw new NotFoundException($messages['PROFILE']['EXCEPTION']);
+    }
+
+    /**
+     * get user base info (only from users table)
+     * 
+     * @param string $email
+     * @return User $user
+     */
+    public static function email(string $email)
+    {
+        try {
+            $messages = self::getMessages();
+            $user = User::where('email', $email)->first();
+
+            if(!$user) {
+                throw new NotFoundException($messages['PROFILE']['EXCEPTION']);
+            }
+
+            return $user;
+        } catch (Exception $e) {
+            Log::error('User not found - UserHelper::email(' . $email . ')');
             throw new NotFoundException($messages['PROFILE']['EXCEPTION']);
         }
 

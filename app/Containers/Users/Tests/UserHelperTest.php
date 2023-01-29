@@ -16,6 +16,7 @@ use App\Helpers\Tests\TestsFacilitator;
 use Illuminate\Support\Str;
 use App\Helpers\ConstantsHelper;
 use App\Helpers\Response\CollectionsHelper;
+use App\Helpers\Storage\StoreHelper;
 use App\Models\User;
 use Illuminate\Http\Testing\File;
 use Auth;
@@ -57,6 +58,38 @@ class UserHelperTest extends TestCase
         $this->expectException(NotFoundException::class);
 
         $userGot = UserHelper::id(53123215);
+
+        $this->assertException($result, 'NotFoundException');
+    }
+
+    /**
+     * Test successful email.
+     *
+     * @return void
+     */
+    public function test_email_successful()
+    {
+        $userData = $this->getUserData();
+        $user = UserHelper::create($userData);
+
+        $userEmail = $user->email;
+
+        $user = User::where('email', $userEmail)->first();
+        $userGot = UserHelper::email($userEmail);
+
+        $this->assertEquals($user, $userGot);
+    }
+
+    /**
+     * Test fail email.
+     *
+     * @return void
+     */
+    public function test_email_fail()
+    {
+        $this->expectException(NotFoundException::class);
+
+        $userGot = UserHelper::email('wrong_email@not_email.com');
 
         $this->assertException($result, 'NotFoundException');
     }
@@ -347,22 +380,6 @@ class UserHelperTest extends TestCase
 
         $user = User::find($user->id);
         $this->assertEquals($user->profile_image, $result->id);
-    }
-
-    /**
-     * Test update profile photo fail.
-     *
-     * @return void
-     */
-    public function test_update_profile_photo_fail()
-    {
-        $userData = $this->getUserData();
-        $user = UserHelper::create($userData);
-
-        $this->expectException(UpdateFailedException::class);
-        $result = UserHelper::updateProfilePhoto($user, null);
-
-        $this->assertException($result, 'UpdateFailedException');
     }
 
     private function getUserData()

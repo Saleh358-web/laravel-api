@@ -4,6 +4,7 @@ namespace App\Containers\Auth\Helpers;
 
 use App\Containers\Auth\Helpers\UserTokenHelper;
 use Illuminate\Support\Facades\Log;
+use App\Containers\Users\Helpers\UserHelper;
 use App\Models\User;
 
 class UserAuthHelper
@@ -19,11 +20,18 @@ class UserAuthHelper
     {
         if (auth()->attempt($creds)) {
             Log::info('Login successful');
-            $token = UserTokenHelper::create_token(auth()->user());
-            return [
-                'user' => auth()->user(),
-                'token' => $token
-            ] ;
+
+            $user = UserHelper::email($creds['email']);
+            if($user->active) {
+                // This user can't login
+                $token = UserTokenHelper::create_token(auth()->user());
+                return [
+                    'user' => UserHelper::profile(),
+                    'token' => $token
+                ] ;
+            } else {
+                UserTokenHelper::revoke_all($user); // Revoke all user tokens just in case there are some active ones
+            }
         }
         
         Log::info('Login failed');
