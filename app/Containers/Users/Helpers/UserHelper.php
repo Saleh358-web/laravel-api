@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use App\Helpers\ConstantsHelper;
 use Illuminate\Support\Facades\Log;
 use App\Exceptions\Common\NotFoundException;
+use App\Exceptions\Common\DeleteFailedException;
 use App\Exceptions\Common\CreateFailedException;
 use App\Exceptions\Common\UpdateFailedException;
 use App\Exceptions\Common\NotAllowedException;
@@ -20,6 +21,7 @@ use App\Containers\Users\Exceptions\OldPasswordException;
 use App\Containers\Users\Exceptions\SameOldPasswordException;
 use App\Containers\Users\Exceptions\UpdatePasswordFailedException;
 use App\Containers\Users\Messages\Messages;
+use App\Containers\Auth\Helpers\UserTokenHelper;
 use App\Containers\Users\Helpers\UserRolesHelper;
 use App\Helpers\Storage\StoreHelper;
 use App\Helpers\Storage\LocalStore;
@@ -115,6 +117,61 @@ class UserHelper
             Log::error('Get user profile failed - UserHelper::profile()');
             throw $e;
         }
+    }
+
+    /**
+     * This function set the active filed for a user profile to false
+     * which will prevent him from exercising login an all his activities
+     * on this api
+     * 
+     * @param User $user
+     * @return boolean | UpdateUserException
+     */
+    public static function inActivate(User $user)
+    {
+        DB::beginTransaction();
+        try {
+            $user->active = false;
+            $user->save();
+
+            // revoke all this user's tokens
+            UserTokenHelper::revoke_all($user);
+
+            Log::info('User profile inactivated');
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UpdateUserException($messages['PROFILE']['EXCEPTION']);
+        }
+
+        throw new UpdateUserException($messages['PROFILE']['EXCEPTION']);
+    }
+
+     /**
+     * This function set the active filed for a user profile to true
+     * which will allow him to exercise login an all his allowed activities
+     * on this api
+     * 
+     * @param User $user
+     * @return boolean | UpdateUserException
+     */
+    public static function activate(User $user)
+    {
+        DB::beginTransaction();
+        try {
+            $user->active = true;
+            $user->save();
+
+            Log::info('User profile is now activated');
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UpdateUserException($messages['PROFILE']['EXCEPTION']);
+        }
+
+        throw new UpdateUserException($messages['PROFILE']['EXCEPTION']);
     }
 
     /**
@@ -518,6 +575,45 @@ class UserHelper
 
         DB::rollback();
         return false;
+    }
+
+    /**
+     * Delete user from database
+     * and all his related data
+     * 
+     * @param User $user
+     * @return boolean | DeleteFailedException
+     */
+    public static function deleteUser(User $user)
+    {
+        DB::beginTransaction();
+        try {
+            $user->roles()->detach();
+            $user->permissions()->detach();
+
+            if($user->profile_image) {
+                $image = $user->profileImage()->first();
+                if($image) {
+                    StoreHelper::deleteFile($image->link);
+                    $image->delete();
+                }
+            }
+
+            // revoke all this user's tokens
+            UserTokenHelper::revoke_all($user);
+
+            $user->active = false;
+            $user->save();
+
+            $user->delete();
+
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollback();
+            throw new DeleteFailedException('User');
+        }
+        throw new DeleteFailedException('User');
     }
 
     public static function trimUserData(array $data)

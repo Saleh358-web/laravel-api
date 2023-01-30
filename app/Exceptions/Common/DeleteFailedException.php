@@ -6,7 +6,7 @@ use App\Exceptions\ApplicationException;
 use Illuminate\Http\Response;
 use App\Messages\ExceptionMessages;
 
-class UpdateFailedException extends ApplicationException
+class DeleteFailedException extends ApplicationException
 {
     use ExceptionMessages;
 

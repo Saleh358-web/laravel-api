@@ -18,6 +18,8 @@ use App\Helpers\ConstantsHelper;
 use App\Helpers\Response\CollectionsHelper;
 use App\Helpers\Storage\StoreHelper;
 use App\Models\User;
+use App\Models\Role;
+use App\Models\Permission;
 use Illuminate\Http\Testing\File;
 use Auth;
 
@@ -120,6 +122,54 @@ class UserHelperTest extends TestCase
         $this->expectException(NotFoundException::class);
         $profile = UserHelper::profile();
         $this->assertException($result, 'NotFoundException');
+    }
+
+    /**
+     * Test successful in_activate.
+     *
+     * @return void
+     */
+    public function test_in_activate_successful()
+    {
+        $userCreatedWithRaw = $this->createUser();
+        $user = $userCreatedWithRaw['user'];
+
+        // login user to have at least one login token for him
+        $content = $this->login(null, $userCreatedWithRaw['userRawData']);
+
+        $result = UserHelper::inactivate($user);
+        $this->assertEquals($result, true);
+        
+        $checkUser = User::find($user->id);
+        $this->assertEquals($checkUser->active, false);
+        $this->assertEquals($checkUser->tokens->where('revoked', 0)->count(), 0);
+    }
+
+    /**
+     * Test successful activate.
+     *
+     * @return void
+     */
+    public function test_activate_successful()
+    {
+        $userCreatedWithRaw = $this->createUser();
+        $user = $userCreatedWithRaw['user'];
+
+        // login user to have at least one login token for him
+        $content = $this->login(null, $userCreatedWithRaw['userRawData']);
+
+        $inActivate = UserHelper::inactivate($user); // the create function above creates active user
+        
+        // assert that user is truly inactivated
+        $this->assertEquals($inActivate, true);
+        $checkUser = User::find($user->id);
+        $this->assertEquals($checkUser->active, false);
+        $this->assertEquals($checkUser->tokens->where('revoked', 0)->count(), 0);
+
+        $result = UserHelper::activate($user);
+        $this->assertEquals($result, true);
+        $checkUser = User::find($user->id);
+        $this->assertEquals($checkUser->active, true);
     }
 
     /**
@@ -380,6 +430,39 @@ class UserHelperTest extends TestCase
 
         $user = User::find($user->id);
         $this->assertEquals($user->profile_image, $result->id);
+    }
+
+    /**
+     * Test delete user successful.
+     *
+     * @return void
+     */
+    public function test_delete_user_successful()
+    {
+        // create user with profile image
+        $image = File::image('image.png', 400, 100);
+        $userData = $this->getUserData();
+        $user = UserHelper::create($userData);
+        $result = UserHelper::updateProfilePhoto($user, $image);
+        $user = User::find($user->id);
+        $this->assertEquals($user->profile_image, $result->id);
+
+        // attach a role
+        $role = Role::where('slug', 'user')->first();
+        $user->roles()->attach($role);
+        $this->assertEquals($user->roles()->count(), 1);
+
+        // attach a permission
+        $permission = Permission::first();
+        $user->permissions()->attach($permission);
+        $this->assertEquals($user->permissions()->count(), 1);
+        
+        $result = UserHelper::deleteUser($user);
+        $this->assertEquals($result, true);
+        $checkUser = User::where('id', $user->id)->withTrashed()->first();
+        $this->assertEquals($checkUser->active, false);
+        $this->assertEquals($user->roles()->count(), 0);
+        $this->assertEquals($user->permissions()->count(), 0);
     }
 
     private function getUserData()
