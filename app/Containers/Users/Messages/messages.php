@@ -36,7 +36,9 @@ trait Messages
                 'ACTIVATE_DEACTIVATE_USER_NOT_ALLOWED' => 'This user is not allowed to activate/deactivate users',
                 'CROSS_AUTH_ERROR' => 'User can only edit a user with a lower role hierarchy',
                 'DEACTIVATE' => 'Deactivation was successful',
-                'DEACTIVATE_ERROR' => 'Deactivation failed'
+                'DEACTIVATE_ERROR' => 'Deactivation failed',
+                'ACTIVATE' => 'Activation was successful',
+                'ACTIVATE_ERROR' => 'Activation failed',
             ],
             'EMAIL_EXISTS' => 'Email already exists'
         ];
