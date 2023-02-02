@@ -33,6 +33,10 @@ trait Messages
                 'DETACH_ROLES' => 'Roles removed successfully',
                 'DETACH_ROLES_FAILED' => 'Detach roles failed',
                 'ATTACH_ROLES_NOT_ALLOWED'  => 'This user is not allowed to attach/detach roles',
+                'ACTIVATE_DEACTIVATE_USER_NOT_ALLOWED' => 'This user is not allowed to activate/deactivate users',
+                'CROSS_AUTH_ERROR' => 'User can only edit a user with a lower role hierarchy',
+                'DEACTIVATE' => 'Deactivation was successful',
+                'DEACTIVATE_ERROR' => 'Deactivation failed'
             ],
             'EMAIL_EXISTS' => 'Email already exists'
         ];

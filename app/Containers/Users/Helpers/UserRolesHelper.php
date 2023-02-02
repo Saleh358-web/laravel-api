@@ -12,22 +12,25 @@ class UserRolesHelper
      * which is the role with the highest priority.
      * 
      * @param Role[] $roles
-     * @return Role $smallestRole | InvalidArgumentException
+     * @return Role $smallestRole | null
      */
     public static function getHighestRole($roles)
     {
         if(count($roles) == 0) {
             // roles should be an array of Role model
-            throw new Exception\InvalidArgumentException('Roles should be an array of Role model');
+            return null;
         }
 
         // In Case of roles the smallest role id is the highest role
-        $smallestRole = $roles[0];
+        $highestRole = $roles[0];
 
         foreach($roles as $role) {
-            $role->id < $smallestRole->id ? $smallestRole = $role : $smallestRole = $smallestRole;
+            if(!$role || !$highestRole || !$role->id || !$highestRole->id) {
+                return null;
+            }
+            $role->id < $highestRole->id ? $highestRole = $role : $highestRole = $highestRole;
         }
 
-        return $smallestRole;
+        return $highestRole;
     }
 }

@@ -43,6 +43,14 @@ trait PermissionsHelper
             [
                 'name' => 'Attach Permissions',
                 'slug' => 'attach-permissions',
+            ],
+            [
+                'name' => 'Activate/Deactivate User',
+                'slug' => 'activate-user',
+            ],
+            [
+                'name' => 'Delete User',
+                'slug' => 'delete-user',
             ]
         ];
 

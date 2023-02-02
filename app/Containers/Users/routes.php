@@ -40,6 +40,9 @@ Route::group([
         ->name('users.addRolesToUser');
         Route::put('removeRolesToUser', [UsersController::class, 'removeRolesToUser'])
         ->name('users.addRolesToUser');
+
+        // User activation and deactivation
+        Route::put('deactivateUsers', [UsersController::class, 'deactivateUsers'])->name('users.deactivateUsers');
     });
 
 });

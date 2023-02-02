@@ -4,9 +4,11 @@ namespace App\Containers\Users\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Containers\Users\Requests\ActivateDeactivateUsersRequest;
 use App\Containers\Users\Messages\Messages;
 use App\Helpers\Response\ResponseHelper;
 use App\Containers\Users\Helpers\UserHelper;
+use App\Containers\Users\Helpers\CrossAuthorizationHelper;
 use App\Containers\Users\Validators\UsersValidators;
 use App\Helpers\Database\PermissionsHelper;
 use Exception;
@@ -274,5 +276,55 @@ class UsersController extends Controller
             [],
             $this->messages['USERS']['DETACH_ROLES_FAILED']
         );
+    }
+
+    /**
+     * Deactivate User
+     * This function deactivates user
+     * revokes his logged in tokens preventing him
+     * from exercising his activities to this api
+     * 
+     * @param ActivateDeactivateUsersRequest $request
+     * @return \Illuminate\Http\Response
+     */
+    public function deactivateUsers(ActivateDeactivateUsersRequest $request)
+    {
+        $this->messages = $this->messages();
+
+        $this->addPermission(['name' => 'Activate/Deactivate User', 'slug' => 'activate-user']);
+
+        if (!Auth::user()->allowedTo('activate-user')) {
+            return $this->return_response(405, [], $this->messages['USERS']['ACTIVATE_DEACTIVATE_USER_NOT_ALLOWED']);
+        }
+
+        try {
+            $ids = $request->get('user_ids');
+
+            $user = auth()->user();
+            $crossAuth = CrossAuthorizationHelper::crossAuthorized($user, $ids);
+
+            if(!$crossAuth) {
+                return $this->return_response(405, [], $this->messages['USERS']['CROSS_AUTH_ERROR']);
+            }
+
+            foreach($ids as $id) {
+                UserHelper::inActivate(UserHelper::id($id));
+            }
+
+            return $this->return_response(
+                200,
+                [],
+                $this->messages['USERS']['DEACTIVATE']
+            );
+        } catch (Exception $e) {
+            return $this->return_response(
+                405,
+                [],
+                $this->messages['USERS']['DEACTIVATE_ERROR'],
+                $this->exception_message($e)
+            );
+        }
+
+        return $this->return_response(405, [], $this->messages['USERS']['DEACTIVATE_ERROR']);
     }
 }
