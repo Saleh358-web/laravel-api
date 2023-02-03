@@ -200,8 +200,77 @@ class UserHelper
             Log::info('User returned successfully');
 
             return $users;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Get users failed - UserHelper::getAll()');
+            throw $e;
+        }
+
+        return [];
+    }
+
+    /**
+     * get deleted users
+     * that were deleted by soft delete
+     * 
+     * @param int $paginationCount
+     * @return pagination of users
+     */
+    public static function getDeleted(int $paginationCount = null)
+    {
+        try {
+            $messages = self::getMessages();
+            $paginationCount = ConstantsHelper::getPagination($paginationCount);
+
+            $users = User::onlyTrashed()->with(['roles', 'permissions', 'profileImage'])
+            ->get()->each(function (User $user) {
+                if($user->profileImage) {
+                    $user->profileImage->link = StoreHelper::getFileLink($user->profileImage->link);
+                }
+            });
+
+            $users = CollectionsHelper::paginate($users, $paginationCount);
+            
+            $users = json_decode(json_encode($users)); // This will change its type to StdClass
+
+            Log::info('User returned successfully');
+
+            return $users;
+        } catch (Exception $e) {
+            Log::error('Get users failed - UserHelper::getDeleted()');
+            throw $e;
+        }
+
+        return [];
+    }
+
+    /**
+     * get inactivated users
+     * 
+     * @param int $paginationCount
+     * @return pagination of users
+     */
+    public static function getInActivated(int $paginationCount = null)
+    {
+        try {
+            $messages = self::getMessages();
+            $paginationCount = ConstantsHelper::getPagination($paginationCount);
+
+            $users = User::where('active', false)->with(['roles', 'permissions', 'profileImage'])
+            ->get()->each(function (User $user) {
+                if($user->profileImage) {
+                    $user->profileImage->link = StoreHelper::getFileLink($user->profileImage->link);
+                }
+            });
+
+            $users = CollectionsHelper::paginate($users, $paginationCount);
+            
+            $users = json_decode(json_encode($users)); // This will change its type to StdClass
+
+            Log::info('User returned successfully');
+
+            return $users;
+        } catch (Exception $e) {
+            Log::error('Get users failed - UserHelper::getDeleted()');
             throw $e;
         }
 

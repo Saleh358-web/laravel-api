@@ -43,10 +43,12 @@ Route::group([
         ->name('users.addRolesToUser');
 
         // User activation and deactivation
+        Route::get('inactiveUsers', [UsersController::class, 'getInActiveUsers'])->name('users.get.inactive');
         Route::put('deactivateUsers', [UsersController::class, 'deactivateUsers'])->name('users.deactivateUsers');
         Route::put('activateUsers', [UsersController::class, 'activateUsers'])->name('users.activateUsers');
 
         // Users delete
+        Route::get('deletedUsers', [UsersController::class, 'getDeletedUsers'])->name('users.get.deleted');
         Route::delete('deleteUsers', [UsersController::class, 'deleteUsers'])->name('users.delete');
     });
 

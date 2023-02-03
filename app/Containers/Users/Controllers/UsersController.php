@@ -378,10 +378,13 @@ class UsersController extends Controller
     }
 
     /**
-     * Deactivate Users
-     * This function deactivates users
+     * Delete Users
+     * This function deletes users
      * revokes his logged in tokens preventing him
      * from exercising his activities to this api
+     * and prevent users from restoring his profile.
+     * 
+     * To restore request the restore deleted route
      * 
      * @param UserArraysRequest $request
      * @return \Illuminate\Http\Response
@@ -425,5 +428,98 @@ class UsersController extends Controller
         }
 
         return $this->return_response(405, [], $this->messages['USERS']['DELETE_ERROR']);
+    }
+
+    /**
+     * This functions returns the profiles of the deleted users
+     * Being deleted only by soft deletes
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function getDeletedUsers()
+    {
+        $this->addPermission(['name' => 'Get deleted users', 'slug' => 'get-deleted-users']);
+
+        if (!Auth::user()->allowedTo('get-deleted-users')) {
+            return $this->return_response(
+                405,
+                [],
+                $this->messages['USERS']['GET_ERROR']
+            );
+        }
+
+        try {
+            $data = UserHelper::getDeleted();
+            
+            $info = [
+                'meta' => $this->metaData($data),
+                'users' => $data->data
+            ];
+
+            return $this->return_response(
+                200,
+                $info,
+                $this->messages['USERS']['GET']
+            );
+        } catch (Exception $e) {
+            return $this->return_response(
+                405,
+                [],
+                $this->messages['USERS']['GET_ERROR'],
+                $this->exception_message($e)
+            );
+        }
+
+        return $this->return_response(
+            405,
+            [],
+            $this->messages['USERS']['GET_ERROR']
+        );
+    }
+
+    /**
+     * This functions returns the in activated users
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function getInActiveUsers()
+    {
+        $this->addPermission(['name' => 'Get inactive users', 'slug' => 'get-inactive-users']);
+
+        if (!Auth::user()->allowedTo('get-inactive-users')) {
+            return $this->return_response(
+                405,
+                [],
+                $this->messages['USERS']['GET_ERROR']
+            );
+        }
+
+        try {
+            $data = UserHelper::getInActivated();
+            
+            $info = [
+                'meta' => $this->metaData($data),
+                'users' => $data->data
+            ];
+
+            return $this->return_response(
+                200,
+                $info,
+                $this->messages['USERS']['GET']
+            );
+        } catch (Exception $e) {
+            return $this->return_response(
+                405,
+                [],
+                $this->messages['USERS']['GET_ERROR'],
+                $this->exception_message($e)
+            );
+        }
+
+        return $this->return_response(
+            405,
+            [],
+            $this->messages['USERS']['GET_ERROR']
+        );
     }
 }

@@ -51,6 +51,14 @@ trait PermissionsHelper
             [
                 'name' => 'Delete User',
                 'slug' => 'delete-user',
+            ],
+            [
+                'name' => 'Get deleted users',
+                'slug' => 'get-deleted-users',
+            ],
+            [
+                'name' => 'Get inactive users',
+                'slug' => 'get-inactive-users',
             ]
         ];
 
