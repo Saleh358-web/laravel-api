@@ -11,6 +11,7 @@ use App\Containers\Users\Helpers\UserHelper;
 use App\Containers\Users\Helpers\CrossAuthorizationHelper;
 use App\Containers\Users\Validators\UsersValidators;
 use App\Helpers\Database\PermissionsHelper;
+use App\Requests\PaginationRequest;
 use Exception;
 use Auth;
 
@@ -28,9 +29,10 @@ class UsersController extends Controller
     /**
      * Get all users
      * 
+     * @param PaginationRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function get()
+    public function get(PaginationRequest $request)
     {
         $this->addPermission(['name' => 'Get all users', 'slug' => 'get-users']);
 
@@ -43,7 +45,7 @@ class UsersController extends Controller
         }
 
         try {
-            $data = UserHelper::getAll();
+            $data = UserHelper::getAll($request->get('pagination'));
             
             $info = [
                 'meta' => $this->metaData($data),
@@ -433,10 +435,11 @@ class UsersController extends Controller
     /**
      * This functions returns the profiles of the deleted users
      * Being deleted only by soft deletes
-     * 
+     *
+     * @param PaginationRequest $request 
      * @return \Illuminate\Http\Response
      */
-    public function getDeletedUsers()
+    public function getDeletedUsers(PaginationRequest $request)
     {
         $this->addPermission(['name' => 'Get deleted users', 'slug' => 'get-deleted-users']);
 
@@ -449,7 +452,7 @@ class UsersController extends Controller
         }
 
         try {
-            $data = UserHelper::getDeleted();
+            $data = UserHelper::getDeleted($request->get('pagination'));
             
             $info = [
                 'meta' => $this->metaData($data),
@@ -480,9 +483,10 @@ class UsersController extends Controller
     /**
      * This functions returns the in activated users
      * 
+     * @param PaginationRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function getInActiveUsers()
+    public function getInActiveUsers(PaginationRequest $request)
     {
         $this->addPermission(['name' => 'Get inactive users', 'slug' => 'get-inactive-users']);
 
@@ -495,7 +499,7 @@ class UsersController extends Controller
         }
 
         try {
-            $data = UserHelper::getInActivated();
+            $data = UserHelper::getInActivated($request->get('pagination'));
             
             $info = [
                 'meta' => $this->metaData($data),
