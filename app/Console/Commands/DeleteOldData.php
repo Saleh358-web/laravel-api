@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Carbon\Carbon;
 use App\Models\Image;
+use App\Models\User;
 
 class DeleteOldData extends Command
 {
@@ -34,6 +35,7 @@ class DeleteOldData extends Command
         $dateBeforeThreeMonth = $this->subtractDays(90);
 
         $this->deleteSoftDeletedImages($dateBeforeOneMonth); // delete soft deleted images before one month
+        $this->deleteSoftDeletedUsers($dateBeforeTwoMonth); // delete soft deleted users before two months
 
         $this->info('Successfully deleted old data.');
         return Command::SUCCESS;
@@ -63,6 +65,17 @@ class DeleteOldData extends Command
      */
     private function deleteSoftDeletedImages(Carbon $date): void
     {
-        Image::onlyTrashed('deleted_at', '<=', $date)->forcedelete();
+        Image::onlyTrashed()->where('deleted_at', '<=', $date)->forcedelete();
+    }
+
+    /**
+     * This function deletes soft deleted users before specific date
+     * 
+     * @param $date
+     * @return void
+     */
+    private function deleteSoftDeletedUsers(Carbon $date): void
+    {
+        User::onlyTrashed()->where('deleted_at', '<=', $date)->forcedelete();
     }
 }

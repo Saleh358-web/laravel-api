@@ -29,7 +29,8 @@ class User extends Authenticatable
         'active',
         'profile_image',
         'can_restore',
-        'online'
+        'online',
+        'last_seen'
     ];
 
     /**

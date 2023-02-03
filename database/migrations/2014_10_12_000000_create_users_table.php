@@ -24,7 +24,8 @@ return new class extends Migration
             $table->timestamp('password_updated_at')->nullable();
             $table->boolean('active')->default(true);
             $table->boolean('can_restore')->default(true); // boolean to check if user can be restored if deleted
-            $table->dateTime('online')->nullable();
+            $table->boolean('online')->nullable();
+            $table->dateTime('last_seen')->nullable();
             $table->unsignedBigInteger('profile_image')->nullable();
             $table->rememberToken();
             $table->softDeletes();
