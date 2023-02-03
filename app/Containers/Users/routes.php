@@ -44,6 +44,9 @@ Route::group([
         // User activation and deactivation
         Route::put('deactivateUsers', [UsersController::class, 'deactivateUsers'])->name('users.deactivateUsers');
         Route::put('activateUsers', [UsersController::class, 'activateUsers'])->name('users.activateUsers');
+
+        // Users delete
+        Route::delete('deleteUsers', [UsersController::class, 'deleteUsers'])->name('users.delete');
     });
 
 });

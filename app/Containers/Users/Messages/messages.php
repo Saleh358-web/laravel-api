@@ -39,6 +39,9 @@ trait Messages
                 'DEACTIVATE_ERROR' => 'Deactivation failed',
                 'ACTIVATE' => 'Activation was successful',
                 'ACTIVATE_ERROR' => 'Activation failed',
+                'DELETE_USER_NOT_ALLOWED' => 'This user is not allowed to delete users',
+                'DELETE_SUCCESSFUL' => 'Delete was successful',
+                'DELETE_ERROR' => 'Delete failed',
             ],
             'EMAIL_EXISTS' => 'Email already exists'
         ];

@@ -4,7 +4,7 @@ namespace App\Containers\Users\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ActivateDeactivateUsersRequest extends FormRequest
+class UserArraysRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

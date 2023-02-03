@@ -4,7 +4,7 @@ namespace App\Containers\Users\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Containers\Users\Requests\ActivateDeactivateUsersRequest;
+use App\Containers\Users\Requests\UserArraysRequest;
 use App\Containers\Users\Messages\Messages;
 use App\Helpers\Response\ResponseHelper;
 use App\Containers\Users\Helpers\UserHelper;
@@ -284,10 +284,10 @@ class UsersController extends Controller
      * revokes his logged in tokens preventing him
      * from exercising his activities to this api
      * 
-     * @param ActivateDeactivateUsersRequest $request
+     * @param UserArraysRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function deactivateUsers(ActivateDeactivateUsersRequest $request)
+    public function deactivateUsers(UserArraysRequest $request)
     {
         $this->messages = $this->messages();
 
@@ -333,10 +333,10 @@ class UsersController extends Controller
      * This function activates users
      * allowing him to exercise his activities to this api
      * 
-     * @param ActivateDeactivateUsersRequest $request
+     * @param UserArraysRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function activateUsers(ActivateDeactivateUsersRequest $request)
+    public function activateUsers(UserArraysRequest $request)
     {
         $this->messages = $this->messages();
 
@@ -375,5 +375,55 @@ class UsersController extends Controller
         }
 
         return $this->return_response(405, [], $this->messages['USERS']['ACTIVATE_ERROR']);
+    }
+
+    /**
+     * Deactivate Users
+     * This function deactivates users
+     * revokes his logged in tokens preventing him
+     * from exercising his activities to this api
+     * 
+     * @param UserArraysRequest $request
+     * @return \Illuminate\Http\Response
+     */
+    public function deleteUsers(UserArraysRequest $request)
+    {
+        $this->messages = $this->messages();
+
+        $this->addPermission(['name' => 'Delete User', 'slug' => 'delete-user']);
+
+        if (!Auth::user()->allowedTo('delete-user')) {
+            return $this->return_response(405, [], $this->messages['USERS']['DELETE_USER_NOT_ALLOWED']);
+        }
+
+        try {
+            $ids = $request->get('user_ids');
+
+            $user = auth()->user();
+            $crossAuth = CrossAuthorizationHelper::crossAuthorized($user, $ids);
+
+            if(!$crossAuth) {
+                return $this->return_response(405, [], $this->messages['USERS']['CROSS_AUTH_ERROR']);
+            }
+
+            foreach($ids as $id) {
+                UserHelper::deleteUser(UserHelper::id($id));
+            }
+
+            return $this->return_response(
+                200,
+                [],
+                $this->messages['USERS']['DELETE_SUCCESSFUL']
+            );
+        } catch (Exception $e) {
+            return $this->return_response(
+                405,
+                [],
+                $this->messages['USERS']['DELETE_ERROR'],
+                $this->exception_message($e)
+            );
+        }
+
+        return $this->return_response(405, [], $this->messages['USERS']['DELETE_ERROR']);
     }
 }
