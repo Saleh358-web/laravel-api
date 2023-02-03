@@ -19,6 +19,8 @@ trait Messages
                 'PASSWORD_ERROR' => 'Password updated failed. The password should have at least 6 characters, 1 capital letter, 1 number and 1 special character',
                 'OLD_PASSWORD_ERROR' => 'Old password is incorrect',
                 'OLD_PASSWORD_ERROR_EQUAL_NEW' => 'Password shouldn\'t be the same as the old one',
+                'DELETE_SUCCESS' => 'Profile deleted successfully. You can restore your account if logged again within 60 days from now',
+                'DELETE_ERROR' => 'Profile delete failed'
             ],
             'USERS' => [
                 'GET' => 'Users found',

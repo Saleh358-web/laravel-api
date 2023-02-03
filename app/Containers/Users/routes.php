@@ -14,6 +14,7 @@ Route::group([
     // Profile
     Route::get('/profile', [ProfileController::class, 'get'])->name('profile.get');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'delete'])->name('profile.delete');
 
     // Profile Photo
     Route::post('/profile_image', [ProfileController::class, 'updatePhoto'])->name('profile.photo.upload');

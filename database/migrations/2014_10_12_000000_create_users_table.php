@@ -17,11 +17,14 @@ return new class extends Migration
             $table->id();
             $table->string('first_name');
             $table->string('last_name');
+            $table->dateTime('dob')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->timestamp('password_updated_at')->nullable();
             $table->boolean('active')->default(true);
+            $table->boolean('can_restore')->default(true); // boolean to check if user can be restored if deleted
+            $table->dateTime('online')->nullable();
             $table->unsignedBigInteger('profile_image')->nullable();
             $table->rememberToken();
             $table->softDeletes();

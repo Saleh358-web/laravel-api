@@ -180,4 +180,37 @@ class ProfileController extends Controller
             $this->messages['PROFILE']['UPDATE_ERROR']
         );
     }
+
+    /**
+     * Uploads profile photo
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function delete()
+    {
+        try {
+            $user = Auth::user();
+
+            UserHelper::deleteUser($user, true);
+
+            return $this->return_response(
+                200,
+                [],
+                $this->messages['PROFILE']['DELETE_SUCCESS']
+            );
+        } catch (Exception $e) {
+            return $this->return_response(
+                405,
+                [],
+                $this->messages['PROFILE']['DELETE_ERROR'],
+                $this->exception_message($e)
+            );
+        }
+
+        return $this->return_response(
+            405,
+            [],
+            $this->messages['PROFILE']['DELETE_ERROR']
+        );
+    }
 }

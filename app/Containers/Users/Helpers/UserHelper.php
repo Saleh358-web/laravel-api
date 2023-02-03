@@ -579,26 +579,34 @@ class UserHelper
 
     /**
      * Delete user from database
-     * and all his related data
+     * and all his related data if light delete is false
+     * Deactivate and soft delete user if light delete is true
      * 
      * @param User $user
+     * @param bool $lightDelete
      * @return boolean | DeleteFailedException
      */
-    public static function deleteUser(User $user)
+    public static function deleteUser(User $user, bool $lightDelete = false)
     {
         DB::beginTransaction();
         try {
-            $user->roles()->detach();
-            $user->permissions()->detach();
-
-            if($user->profile_image) {
-                $image = $user->profileImage()->first();
-                if($image) {
-                    StoreHelper::deleteFile($image->link);
-                    $image->delete();
+            if(!$lightDelete) {
+                // This user is deleted by a high admin
+                // So we are fully deleting all data related to him
+                $user->roles()->detach();
+                $user->permissions()->detach();
+    
+                if($user->profile_image) {
+                    $image = $user->profileImage()->first();
+                    if($image) {
+                        StoreHelper::deleteFile($image->link);
+                        $image->delete();
+                    }
                 }
-            }
 
+                $user->can_restore = false;
+            }
+            
             // revoke all this user's tokens
             UserTokenHelper::revoke_all($user);
 

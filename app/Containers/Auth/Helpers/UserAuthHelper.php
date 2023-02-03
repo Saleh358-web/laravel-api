@@ -18,6 +18,7 @@ class UserAuthHelper
      */
     public static function login($creds)
     {
+        self::restoreIfDeleted($creds['email']);
         if (auth()->attempt($creds)) {
             Log::info('Login successful');
 
@@ -57,5 +58,25 @@ class UserAuthHelper
         UserTokenHelper::revoke_all($user);
         $token = UserTokenHelper::create_token($user);
         return $token;
+    }
+
+    /**
+     * This function restores a user profile if he was deleted
+     * A cron job is responsible for force deleting the users that have not logged in with 60 days
+     * 
+     * @param string $email
+     * @return void
+     */
+    private static function restoreIfDeleted(string $email): void
+    {
+        $user = User::onlyTrashed('email', $email)->first();
+
+        if($user != null && $user->can_restore) {
+            // User is not deleted yet
+            $user->restore();
+            $user = UserHelper::id($user->id);
+            $user->active = true;
+            $user->save();
+        }
     }
 }

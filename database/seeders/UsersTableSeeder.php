@@ -28,6 +28,7 @@ class UsersTableSeeder extends Seeder
             'first_name' => 'Super',
             'last_name' => 'Admin',
             'email' => 'super-admin@example.com',
+            'email_verified_at' => now(),
             'password' => Hash::make('password'),
         ]);
         $admin->roles()->attach($super_admin_role);
@@ -37,6 +38,7 @@ class UsersTableSeeder extends Seeder
             'first_name' => 'Normal',
             'last_name' => 'Admin',
             'email' => 'admin@example.com',
+            'email_verified_at' => now(),
             'password' => Hash::make('password'),
         ]);
         $admin->roles()->attach($admin_role);
@@ -45,6 +47,7 @@ class UsersTableSeeder extends Seeder
             'first_name' => 'User',
             'last_name' => 'User',
             'email' => 'user@example.com',
+            'email_verified_at' => now(),
             'password' => Hash::make('password'),
         ]);
         $user->roles()->attach($user_role);
