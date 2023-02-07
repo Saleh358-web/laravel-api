@@ -38,7 +38,7 @@ class UsersController extends Controller
 
         if (!Auth::user()->allowedTo('get-users')) {
             return $this->return_response(
-                405,
+                $this->not_allowed,
                 [],
                 $this->messages['USERS']['GET_ERROR']
             );
@@ -53,13 +53,13 @@ class UsersController extends Controller
             ];
 
             return $this->return_response(
-                200,
+                $this->success,
                 $info,
                 $this->messages['USERS']['GET']
             );
         } catch (Exception $e) {
             return $this->return_response(
-                405,
+                $this->bad_request,
                 [],
                 $this->messages['USERS']['GET_ERROR'],
                 $this->exception_message($e)
@@ -67,7 +67,7 @@ class UsersController extends Controller
         }
 
         return $this->return_response(
-            405,
+            $this->bad_request,
             [],
             $this->messages['USERS']['GET_ERROR']
         );
@@ -87,7 +87,7 @@ class UsersController extends Controller
         $this->addPermission(['name' => 'Attach Permissions', 'slug' => 'attach-permissions']);
 
         if (!Auth::user()->allowedTo('attach-permissions')) {
-            return $this->return_response(405, [], $this->messages['USERS']['ATTACH_PERMISSIONS_NOT_ALLOWED']);
+            return $this->return_response($this->not_allowed, [], $this->messages['USERS']['ATTACH_PERMISSIONS_NOT_ALLOWED']);
         }
 
         try {
@@ -102,13 +102,13 @@ class UsersController extends Controller
             }
 
             return $this->return_response(
-                200,
+                $this->success,
                 [],
                 $this->messages['USERS']['ATTACH_PERMISSIONS']
             );
         } catch (Exception $e) {
             return $this->return_response(
-                405,
+                $this->bad_request,
                 [],
                 $this->messages['USERS']['ATTACH_PERMISSIONS_FAILED'],
                 $this->exception_message($e)
@@ -116,7 +116,7 @@ class UsersController extends Controller
         }
 
         return $this->return_response(
-            405,
+            $this->bad_request,
             [],
             $this->messages['USERS']['ATTACH_PERMISSIONS_FAILED']
         );
@@ -136,7 +136,7 @@ class UsersController extends Controller
         $this->addPermission(['name' => 'Attach Permissions', 'slug' => 'attach-permissions']);
 
         if (!Auth::user()->allowedTo('attach-permissions')) {
-            return $this->return_response(405, [], $this->messages['USERS']['ATTACH_PERMISSIONS_NOT_ALLOWED']);
+            return $this->return_response($this->not_allowed, [], $this->messages['USERS']['ATTACH_PERMISSIONS_NOT_ALLOWED']);
         }
 
         try {
@@ -151,13 +151,13 @@ class UsersController extends Controller
             }
 
             return $this->return_response(
-                200,
+                $this->success,
                 [],
                 $this->messages['USERS']['DETACH_PERMISSIONS']
             );
         } catch (Exception $e) {
             return $this->return_response(
-                405,
+                $this->bad_request,
                 [],
                 $this->messages['USERS']['DETACH_PERMISSIONS_FAILED'],
                 $this->exception_message($e)
@@ -165,7 +165,7 @@ class UsersController extends Controller
         }
 
         return $this->return_response(
-            405,
+            $this->bad_request,
             [],
             $this->messages['USERS']['DETACH_PERMISSIONS_FAILED']
         );
@@ -185,7 +185,7 @@ class UsersController extends Controller
         $this->addPermission(['name' => 'Attach Roles', 'slug' => 'attach-roles']);
 
         if (!Auth::user()->allowedTo('attach-roles')) {
-            return $this->return_response(405, [], $this->messages['USERS']['ATTACH_ROLES_NOT_ALLOWED']);
+            return $this->return_response($this->not_allowed, [], $this->messages['USERS']['ATTACH_ROLES_NOT_ALLOWED']);
         }
 
         try {
@@ -204,15 +204,14 @@ class UsersController extends Controller
                 }
     
                 return $this->return_response(
-                    200,
+                    $this->success,
                     [],
                     $this->messages['USERS']['ATTACH_ROLES']
                 );
             }
-            print_r($allowedToUpdateRoles);
         } catch (Exception $e) {
             return $this->return_response(
-                405,
+                $this->bad_request,
                 [],
                 $this->messages['USERS']['ATTACH_ROLES_FAILED'],
                 $this->exception_message($e)
@@ -220,7 +219,7 @@ class UsersController extends Controller
         }
 
         return $this->return_response(
-            405,
+            $this->bad_request,
             [],
             $this->messages['USERS']['ATTACH_ROLES_FAILED']
         );
@@ -240,7 +239,7 @@ class UsersController extends Controller
         $this->addPermission(['name' => 'Attach Roles', 'slug' => 'attach-roles']);
 
         if (!Auth::user()->allowedTo('attach-roles')) {
-            return $this->return_response(405, [], $this->messages['USERS']['ATTACH_ROLES_NOT_ALLOWED']);
+            return $this->return_response($this->not_allowed, [], $this->messages['USERS']['ATTACH_ROLES_NOT_ALLOWED']);
         }
 
         try {
@@ -259,14 +258,14 @@ class UsersController extends Controller
                 }
 
                 return $this->return_response(
-                    200,
+                    $this->success,
                     [],
                     $this->messages['USERS']['DETACH_ROLES']
                 );
             }
         } catch (Exception $e) {
             return $this->return_response(
-                405,
+                $this->bad_request,
                 [],
                 $this->messages['USERS']['DETACH_ROLES_FAILED'],
                 $this->exception_message($e)
@@ -274,7 +273,7 @@ class UsersController extends Controller
         }
 
         return $this->return_response(
-            405,
+            $this->bad_request,
             [],
             $this->messages['USERS']['DETACH_ROLES_FAILED']
         );
@@ -296,7 +295,7 @@ class UsersController extends Controller
         $this->addPermission(['name' => 'Activate/Deactivate User', 'slug' => 'activate-user']);
 
         if (!Auth::user()->allowedTo('activate-user')) {
-            return $this->return_response(405, [], $this->messages['USERS']['ACTIVATE_DEACTIVATE_USER_NOT_ALLOWED']);
+            return $this->return_response($this->not_allowed, [], $this->messages['USERS']['ACTIVATE_DEACTIVATE_USER_NOT_ALLOWED']);
         }
 
         try {
@@ -314,20 +313,20 @@ class UsersController extends Controller
             }
 
             return $this->return_response(
-                200,
+                $this->success,
                 [],
                 $this->messages['USERS']['DEACTIVATE']
             );
         } catch (Exception $e) {
             return $this->return_response(
-                405,
+                $this->bad_request,
                 [],
                 $this->messages['USERS']['DEACTIVATE_ERROR'],
                 $this->exception_message($e)
             );
         }
 
-        return $this->return_response(405, [], $this->messages['USERS']['DEACTIVATE_ERROR']);
+        return $this->return_response($this->bad_request, [], $this->messages['USERS']['DEACTIVATE_ERROR']);
     }
 
     /**
@@ -345,7 +344,7 @@ class UsersController extends Controller
         $this->addPermission(['name' => 'Activate/Deactivate User', 'slug' => 'activate-user']);
 
         if (!Auth::user()->allowedTo('activate-user')) {
-            return $this->return_response(405, [], $this->messages['USERS']['ACTIVATE_DEACTIVATE_USER_NOT_ALLOWED']);
+            return $this->return_response($this->not_allowed, [], $this->messages['USERS']['ACTIVATE_DEACTIVATE_USER_NOT_ALLOWED']);
         }
 
         try {
@@ -363,20 +362,20 @@ class UsersController extends Controller
             }
 
             return $this->return_response(
-                200,
+                $this->success,
                 [],
                 $this->messages['USERS']['ACTIVATE']
             );
         } catch (Exception $e) {
             return $this->return_response(
-                405,
+                $this->bad_request,
                 [],
                 $this->messages['USERS']['ACTIVATE_ERROR'],
                 $this->exception_message($e)
             );
         }
 
-        return $this->return_response(405, [], $this->messages['USERS']['ACTIVATE_ERROR']);
+        return $this->return_response($this->bad_request, [], $this->messages['USERS']['ACTIVATE_ERROR']);
     }
 
     /**
@@ -398,7 +397,7 @@ class UsersController extends Controller
         $this->addPermission(['name' => 'Delete User', 'slug' => 'delete-user']);
 
         if (!Auth::user()->allowedTo('delete-user')) {
-            return $this->return_response(405, [], $this->messages['USERS']['DELETE_USER_NOT_ALLOWED']);
+            return $this->return_response($this->not_allowed, [], $this->messages['USERS']['DELETE_USER_NOT_ALLOWED']);
         }
 
         try {
@@ -416,20 +415,20 @@ class UsersController extends Controller
             }
 
             return $this->return_response(
-                200,
+                $this->success,
                 [],
                 $this->messages['USERS']['DELETE_SUCCESSFUL']
             );
         } catch (Exception $e) {
             return $this->return_response(
-                405,
+                $this->bad_request,
                 [],
                 $this->messages['USERS']['DELETE_ERROR'],
                 $this->exception_message($e)
             );
         }
 
-        return $this->return_response(405, [], $this->messages['USERS']['DELETE_ERROR']);
+        return $this->return_response($this->bad_request, [], $this->messages['USERS']['DELETE_ERROR']);
     }
 
     /**
@@ -445,7 +444,7 @@ class UsersController extends Controller
 
         if (!Auth::user()->allowedTo('get-deleted-users')) {
             return $this->return_response(
-                405,
+                $this->not_allowed,
                 [],
                 $this->messages['USERS']['GET_ERROR']
             );
@@ -460,13 +459,13 @@ class UsersController extends Controller
             ];
 
             return $this->return_response(
-                200,
+                $this->success,
                 $info,
                 $this->messages['USERS']['GET']
             );
         } catch (Exception $e) {
             return $this->return_response(
-                405,
+                $this->bad_request,
                 [],
                 $this->messages['USERS']['GET_ERROR'],
                 $this->exception_message($e)
@@ -474,7 +473,7 @@ class UsersController extends Controller
         }
 
         return $this->return_response(
-            405,
+            $this->bad_request,
             [],
             $this->messages['USERS']['GET_ERROR']
         );
@@ -492,7 +491,7 @@ class UsersController extends Controller
 
         if (!Auth::user()->allowedTo('get-inactive-users')) {
             return $this->return_response(
-                405,
+                $this->not_allowed,
                 [],
                 $this->messages['USERS']['GET_ERROR']
             );
@@ -507,13 +506,13 @@ class UsersController extends Controller
             ];
 
             return $this->return_response(
-                200,
+                $this->success,
                 $info,
                 $this->messages['USERS']['GET']
             );
         } catch (Exception $e) {
             return $this->return_response(
-                405,
+                $this->bad_request,
                 [],
                 $this->messages['USERS']['GET_ERROR'],
                 $this->exception_message($e)
@@ -521,7 +520,7 @@ class UsersController extends Controller
         }
 
         return $this->return_response(
-            405,
+            $this->bad_request,
             [],
             $this->messages['USERS']['GET_ERROR']
         );

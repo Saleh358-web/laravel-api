@@ -39,20 +39,20 @@ class ProfileController extends Controller
             ];
 
             return $this->return_response(
-                200,
+                $this->success,
                 $info,
                 $this->messages['PROFILE']['GET']
             );
         } catch (Exception $e) {
             return $this->return_response(
-                405,
+                $this->bad_request,
                 [],
                 $this->messages['PROFILE']['GET_ERROR'],
                 $this->exception_message($e)
             );
         }
         return $this->return_response(
-            405,
+            $this->bad_request,
             [],
             $this->messages['PROFILE']['GET_ERROR']
         );
@@ -77,13 +77,13 @@ class ProfileController extends Controller
             ];
 
             return $this->return_response(
-                200,
+                $this->success,
                 $data,
                 $this->messages['PROFILE']['UPDATE_SUCCESS']
             );
         } catch (Exception $e) {
             return $this->return_response(
-                405,
+                $this->bad_request,
                 [],
                 $this->messages['PROFILE']['UPDATE_ERROR'],
                 $this->exception_message($e)
@@ -91,7 +91,7 @@ class ProfileController extends Controller
         }
 
         return $this->return_response(
-            405,
+            $this->bad_request,
             [],
             $this->messages['PROFILE']['UPDATE_ERROR']
         );
@@ -115,7 +115,7 @@ class ProfileController extends Controller
 
             if($updated) {
                 return $this->return_response(
-                    200,
+                    $this->success,
                     [
                         'token' => $token
                     ],
@@ -124,7 +124,7 @@ class ProfileController extends Controller
             }
         } catch (Exception $e) {
             return $this->return_response(
-                405,
+                $this->bad_request,
                 [],
                 $this->messages['PROFILE']['PASSWORD_ERROR'],
                 $this->exception_message($e)
@@ -132,7 +132,7 @@ class ProfileController extends Controller
         }
 
         return $this->return_response(
-            405,
+            $this->bad_request,
             [],
             $this->messages['PROFILE']['PASSWORD_ERROR']
         );
@@ -160,13 +160,13 @@ class ProfileController extends Controller
             }
 
             return $this->return_response(
-                200,
+                $this->success,
                 ['user' => UserHelper::profile()],
                 $this->messages['PROFILE']['UPDATE_SUCCESS']
             );
         } catch (Exception $e) {
             return $this->return_response(
-                405,
+                $this->bad_request,
                 [],
                 $this->messages['PROFILE']['UPDATE_ERROR'],
                 $this->exception_message($e)
@@ -174,7 +174,7 @@ class ProfileController extends Controller
         }
 
         return $this->return_response(
-            405,
+            $this->bad_request,
             [],
             $this->messages['PROFILE']['UPDATE_ERROR']
         );
@@ -193,13 +193,13 @@ class ProfileController extends Controller
             UserHelper::deleteUser($user, true);
 
             return $this->return_response(
-                200,
+                $this->success,
                 [],
                 $this->messages['PROFILE']['DELETE_SUCCESS']
             );
         } catch (Exception $e) {
             return $this->return_response(
-                405,
+                $this->bad_request,
                 [],
                 $this->messages['PROFILE']['DELETE_ERROR'],
                 $this->exception_message($e)
@@ -207,7 +207,7 @@ class ProfileController extends Controller
         }
 
         return $this->return_response(
-            405,
+            $this->bad_request,
             [],
             $this->messages['PROFILE']['DELETE_ERROR']
         );
