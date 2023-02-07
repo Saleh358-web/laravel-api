@@ -17,6 +17,7 @@ class Permission extends Model
     protected $fillable = [
         'name',
         'slug',
+        'description'
     ];
     
     public function roles()

@@ -19,14 +19,17 @@ class RolesTableSeeder extends Seeder
             [
                 'name' => 'Super Admin',
                 'slug' => 'super-admin',
+                'description' => 'Has full access to everything'
             ],
             [
                 'name' => 'Admin',
                 'slug' => 'admin',
+                'description' => 'Has access to permissions that the super admin assigns to him'
             ],
             [
                 'name' => 'User',
                 'slug' => 'user',
+                'description' => 'Has access to permissions that the super admin or admin assigns to him'
             ]
         ];
         foreach($roles as $role) {

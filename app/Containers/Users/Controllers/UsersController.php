@@ -34,8 +34,6 @@ class UsersController extends Controller
      */
     public function get(PaginationRequest $request)
     {
-        $this->addPermission(['name' => 'Get all users', 'slug' => 'get-users']);
-
         if (!Auth::user()->allowedTo('get-users')) {
             return $this->return_response(
                 $this->not_allowed,
@@ -84,8 +82,6 @@ class UsersController extends Controller
     {
         $this->messages = $this->messages();
 
-        $this->addPermission(['name' => 'Attach Permissions', 'slug' => 'attach-permissions']);
-
         if (!Auth::user()->allowedTo('attach-permissions')) {
             return $this->return_response($this->not_allowed, [], $this->messages['USERS']['ATTACH_PERMISSIONS_NOT_ALLOWED']);
         }
@@ -133,8 +129,6 @@ class UsersController extends Controller
     {
         $this->messages = $this->messages();
 
-        $this->addPermission(['name' => 'Attach Permissions', 'slug' => 'attach-permissions']);
-
         if (!Auth::user()->allowedTo('attach-permissions')) {
             return $this->return_response($this->not_allowed, [], $this->messages['USERS']['ATTACH_PERMISSIONS_NOT_ALLOWED']);
         }
@@ -181,8 +175,6 @@ class UsersController extends Controller
     public function addRolesToUser(Request $request)
     {
         $this->messages = $this->messages();
-
-        $this->addPermission(['name' => 'Attach Roles', 'slug' => 'attach-roles']);
 
         if (!Auth::user()->allowedTo('attach-roles')) {
             return $this->return_response($this->not_allowed, [], $this->messages['USERS']['ATTACH_ROLES_NOT_ALLOWED']);
@@ -235,8 +227,6 @@ class UsersController extends Controller
     public function removeRolesToUser(Request $request)
     {
         $this->messages = $this->messages();
-
-        $this->addPermission(['name' => 'Attach Roles', 'slug' => 'attach-roles']);
 
         if (!Auth::user()->allowedTo('attach-roles')) {
             return $this->return_response($this->not_allowed, [], $this->messages['USERS']['ATTACH_ROLES_NOT_ALLOWED']);
@@ -292,8 +282,6 @@ class UsersController extends Controller
     {
         $this->messages = $this->messages();
 
-        $this->addPermission(['name' => 'Activate/Deactivate User', 'slug' => 'activate-user']);
-
         if (!Auth::user()->allowedTo('activate-user')) {
             return $this->return_response($this->not_allowed, [], $this->messages['USERS']['ACTIVATE_DEACTIVATE_USER_NOT_ALLOWED']);
         }
@@ -340,8 +328,6 @@ class UsersController extends Controller
     public function activateUsers(UserArraysRequest $request)
     {
         $this->messages = $this->messages();
-
-        $this->addPermission(['name' => 'Activate/Deactivate User', 'slug' => 'activate-user']);
 
         if (!Auth::user()->allowedTo('activate-user')) {
             return $this->return_response($this->not_allowed, [], $this->messages['USERS']['ACTIVATE_DEACTIVATE_USER_NOT_ALLOWED']);
@@ -394,8 +380,6 @@ class UsersController extends Controller
     {
         $this->messages = $this->messages();
 
-        $this->addPermission(['name' => 'Delete User', 'slug' => 'delete-user']);
-
         if (!Auth::user()->allowedTo('delete-user')) {
             return $this->return_response($this->not_allowed, [], $this->messages['USERS']['DELETE_USER_NOT_ALLOWED']);
         }
@@ -440,8 +424,6 @@ class UsersController extends Controller
      */
     public function getDeletedUsers(PaginationRequest $request)
     {
-        $this->addPermission(['name' => 'Get deleted users', 'slug' => 'get-deleted-users']);
-
         if (!Auth::user()->allowedTo('get-deleted-users')) {
             return $this->return_response(
                 $this->not_allowed,
@@ -487,8 +469,6 @@ class UsersController extends Controller
      */
     public function getInActiveUsers(PaginationRequest $request)
     {
-        $this->addPermission(['name' => 'Get inactive users', 'slug' => 'get-inactive-users']);
-
         if (!Auth::user()->allowedTo('get-inactive-users')) {
             return $this->return_response(
                 $this->not_allowed,
