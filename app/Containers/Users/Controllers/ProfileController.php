@@ -5,17 +5,19 @@ namespace App\Containers\Users\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Containers\Users\Messages\Messages;
-use App\Containers\Users\Validators\ProfileValidators;
 use App\Helpers\Response\ResponseHelper;
 use App\Containers\Users\Helpers\UserHelper;
 use App\Helpers\Storage\StoreHelper;
 use App\Containers\Auth\Helpers\UserAuthHelper;
+use App\Containers\Users\Requests\UpdateUserRequest;
+use App\Containers\Users\Requests\UpdateUserPasswordRequest;
+use App\Containers\Users\Requests\UpdateUserPhotoRequest;
 use Exception;
 use Auth;
 
 class ProfileController extends Controller
 {
-    use ResponseHelper, Messages, ProfileValidators;
+    use ResponseHelper, Messages;
 
     protected $messages = array();
 
@@ -59,14 +61,13 @@ class ProfileController extends Controller
     /**
      * Update logged in user profile
      * 
-     * @param  Request $request
+     * @param  UpdateUserRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(UpdateUserRequest $request)
     {
         try {
             $data = $request->all();
-            $this->update_validator($data)->validate();
 
             $user = Auth::user();
             $updateUser = UserHelper::update($user, $data);
@@ -99,14 +100,13 @@ class ProfileController extends Controller
     /**
      * Update logged in user password
      * 
-     * @param  Request $request
+     * @param  UpdateUserPasswordRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function updatePassword(Request $request)
+    public function updatePassword(UpdateUserPasswordRequest $request)
     {
         try {
             $data = $request->all();
-            $this->update_password_validator($data)->validate();
 
             $user = Auth::user();
             $updated = UserHelper::updatePassword($user, $data);
@@ -141,14 +141,13 @@ class ProfileController extends Controller
     /**
      * Uploads profile photo
      * 
-     * @param  Request $request
+     * @param  UpdateUserPhotoRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function updatePhoto(Request $request)
+    public function updatePhoto(UpdateUserPhotoRequest $request)
     {
         try {
             $data = $request->all();
-            $this->update_profile_photo_validator($data)->validate();
 
             $user = Auth::user();
 
