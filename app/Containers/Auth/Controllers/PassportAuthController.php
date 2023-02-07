@@ -39,19 +39,19 @@ class PassportAuthController extends Controller
             $info = UserAuthHelper::login($user_data);
             
             if($info == null) {
-                return $this->return_response(401, [], $this->messages['LOGIN_FAILED']);
+                return $this->return_response($this->not_found, [], $this->messages['LOGIN_FAILED']);
             }
         
             return $this->return_response(
-                200,
+                $this->success,
                 $info,
                 $this->messages['LOGIN_SUCCESS']
             );
         } catch (Exception $e) {
-            return $this->return_response(405, [], $this->messages['LOGIN_FAILED'], $e->getMessage());
+            return $this->return_response($this->bad_request, [], $this->messages['LOGIN_FAILED'], $e->getMessage());
         }
 
-        return $this->return_response(405, [], $this->messages['LOGIN_FAILED']);
+        return $this->return_response($this->bad_request, [], $this->messages['LOGIN_FAILED']);
     }
 
     /**
@@ -67,16 +67,16 @@ class PassportAuthController extends Controller
             
             if($revoked) {
                 return $this->return_response(
-                    200,
+                    $this->success,
                     [],
                     $this->messages['LOGOUT_SUCCESS']
                 );
             }
         } catch (Exception $e) {
-            return $this->return_response(400, [], $this->messages['LOGOUT_FAILED'], $e->getMessage());
+            return $this->return_response($this->bad_request, [], $this->messages['LOGOUT_FAILED'], $e->getMessage());
         }
 
-        return $this->return_response(400, [], $this->messages['LOGOUT_FAILED']);
+        return $this->return_response($this->bad_request, [], $this->messages['LOGOUT_FAILED']);
     }
 
     /**
@@ -95,7 +95,7 @@ class PassportAuthController extends Controller
         $message = $response == Password::RESET_LINK_SENT ? 
         $this->messages['FORGOT_EMAIL_SUCCESS'] : $this->messages['FORGOT_EMAIL_FAIL'];
 
-        $status = $response == Password::RESET_LINK_SENT ? 200 : 400;
+        $status = $response == Password::RESET_LINK_SENT ? $this->success : $this->bad_request;
 
         return $this->return_response(
             $status,
@@ -126,7 +126,7 @@ class PassportAuthController extends Controller
         switch($reset_password_status) {
             case Password::INVALID_TOKEN: {
                 return $this->return_response(
-                    401,
+                    $this->unauthorized,
                     [],
                     $message
                 );
@@ -134,7 +134,7 @@ class PassportAuthController extends Controller
             }
             case Password::INVALID_USER: {
                 return $this->return_response(
-                    400,
+                    $this->bad_request,
                     [],
                     $message
                 );
@@ -144,7 +144,7 @@ class PassportAuthController extends Controller
             case Password::PASSWORD_RESET: {
                 $message = $this->messages['RESET_PASSWORD_SUCCESS'];
                 return $this->return_response(
-                    200,
+                    $this->success,
                     [],
                     $message
                 );
@@ -152,7 +152,7 @@ class PassportAuthController extends Controller
             }
             default: {
                 return $this->return_response(
-                    400,
+                    $this->bad_request,
                     [],
                     $message
                 );
@@ -161,7 +161,7 @@ class PassportAuthController extends Controller
         }
 
         return $this->return_response(
-            400,
+            $this->bad_request,
             [],
             $message
         );

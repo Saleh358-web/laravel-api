@@ -7,6 +7,18 @@ use Exception;
 
 trait ResponseHelper
 {
+    public int $success = 200;
+
+    public int $bad_request = 400;
+
+    public int $unauthorized = 401;
+
+    public int $forbidden = 403;
+
+    public int $not_found = 404;
+
+    public int $not_allowed = 405;
+
     /**
      * This function fills the response that should be sent to the user
      * then returns a response for it.
