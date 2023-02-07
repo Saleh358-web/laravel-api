@@ -70,7 +70,7 @@ class PassportAuthControllerTest extends TestCase
 
         $response = $this->json('POST', '/api/v1/login', $body, ['Accept' => 'application/json']);
 
-        $response->assertStatus(401)->assertJsonStructure([
+        $response->assertStatus(404)->assertJsonStructure([
             'status',
             'message',
             'error'

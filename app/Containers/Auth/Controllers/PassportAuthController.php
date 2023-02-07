@@ -114,7 +114,6 @@ class PassportAuthController extends Controller
     public function resetPassword(ResetPasswordPasswordRequest $request)
     {
         $data = $request->all();
-        $this->reset_password_validator($data)->validate();
 
         $reset_password_status = Password::reset($data, function ($user, $password) {
             $user->password = Hash::make($password);

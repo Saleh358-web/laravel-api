@@ -192,10 +192,9 @@ class ProfileControllerTest extends TestCase
                 'Authorization' => 'Bearer ' . $content->token
             ]);
 
-        $response->assertStatus(405)->assertJsonStructure([
-            'status',
+        $response->assertStatus(422)->assertJsonStructure([
             'message',
-            'error'
+            'errors'
         ]);
     }
 
