@@ -4,17 +4,19 @@ namespace App\Containers\Auth\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Containers\Auth\Validators\UserLoginValidator;
 use App\Helpers\Response\ResponseHelper;
 use App\Containers\Auth\Helpers\UserAuthHelper;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use App\Containers\Auth\Messages\Messages;
+use App\Containers\Auth\Requests\LoginUserRequest;
+use App\Containers\Auth\Requests\ForgotPasswordRequest;
+use App\Containers\Auth\Requests\ResetPasswordPasswordRequest;
 use Exception;
 
 class PassportAuthController extends Controller
 {
-    use UserLoginValidator, ResponseHelper, Messages;
+    use ResponseHelper, Messages;
 
     protected $messages = array();
 
@@ -26,16 +28,13 @@ class PassportAuthController extends Controller
     /**
      * Login user
      * 
-     * @param  Request $request
+     * @param  LoginUserRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function login(Request $request)
+    public function login(LoginUserRequest $request)
     {
         try {
             $user_data = $request->all();
-
-            // returns json error to F.E. if failed
-            $this->login_validator($user_data)->validate();
 
             $info = UserAuthHelper::login($user_data);
             
@@ -84,13 +83,12 @@ class PassportAuthController extends Controller
      * Forgot password
      * Send a reset password email to user
      * 
-     * @param  Request $request
+     * @param  ForgotPasswordRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function forgotPassword(Request $request)
+    public function forgotPassword(ForgotPasswordRequest $request)
     {
         $data = $request->all();
-        $this->forgot_password_validator($data)->validate();
 
         $response = Password::sendResetLink($data);
         
@@ -110,10 +108,10 @@ class PassportAuthController extends Controller
      * Reset password
      * Reset password for a user
      * 
-     * @param  Request $request
+     * @param  ResetPasswordPasswordRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function resetPassword(Request $request)
+    public function resetPassword(ResetPasswordPasswordRequest $request)
     {
         $data = $request->all();
         $this->reset_password_validator($data)->validate();
