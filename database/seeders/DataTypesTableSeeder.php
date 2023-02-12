@@ -17,6 +17,11 @@ class DataTypesTableSeeder extends Seeder
     {
         $types = [
             [
+                'name' => 'Boolean',
+                'slug' => 'bool',
+                'description' => 'This type represents any true or false value.'
+            ],
+            [
                 'name' => 'Integer',
                 'slug' => 'int',
                 'description' => 'This type represents any integer.'
