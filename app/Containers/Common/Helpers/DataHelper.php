@@ -5,7 +5,7 @@ namespace App\Containers\Common\Helpers;
 use App\Exceptions\Common\ArgumentNullException;
 use App\Exceptions\Common\CreateFailedException;
 use App\Exceptions\Common\NotFoundException;
-use App\Containers\Users\Messages\Messages;
+use App\Containers\Common\Messages\Messages;
 use App\Containers\Common\Models\DataType;
 use App\Containers\Common\Models\Data;
 use Illuminate\Support\Facades\Log;
@@ -21,6 +21,21 @@ class DataHelper
         $dataHelper = new DataHelper();
         $messages = $dataHelper->messages();
         return $messages;
+    }
+
+    /**
+     * get a data object by id
+     * 
+     * @param  int $id
+     * @return Data | NotFoundException
+     */
+    public static function id(int $id)
+    {
+        $data = Data::find($id);
+        if(!$data) {
+            throw new NotFoundException('Data');
+        }
+        return $data;
     }
 
     /**
@@ -40,7 +55,7 @@ class DataHelper
             DB::commit();
 
             Log::info('New data created successfully');
-            return $newData;
+            return self::id($newData->id);
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Create data failed - DataHelper::create');

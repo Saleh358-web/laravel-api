@@ -13,6 +13,8 @@ use App\Containers\Common\Models\Data;
 use App\Helpers\Tests\TestsFacilitator;
 use Tests\TestCase;
 
+use Illuminate\Support\Str;
+
 class DataHelperTest extends TestCase
 {
     use TestsFacilitator;
@@ -21,6 +23,132 @@ class DataHelperTest extends TestCase
     {
         parent::setUp();
         $this->withoutExceptionHandling();
+    }
+
+    private function createNewData()
+    {
+        $value = [Str::random(5) => Str::random(5)];
+        $typeId = DataType::where('slug', 'json')->first()->id; // json
+        $data = [
+            'key' => Str::random(5),
+            'value' => $value,
+            'type_id' => $typeId,
+            'description' => Str::random(10)
+        ];
+        $newData = DataHelper::create($data);
+        return $newData;
+    }
+
+    /**
+     * Test successful id.
+     *
+     * @return void
+     */
+    public function test_id_successful()
+    {
+        $newData = $this->createNewData();
+        $result = DataHelper::id($newData->id);
+        $this->assertEquals(Data::find($newData->id), $result);
+    }
+
+    /**
+     * Test fail id.
+     *
+     * @return void
+     */
+    public function test_id_fail()
+    {
+        $this->expectException(NotFoundException::class);
+
+        $result = DataHelper::id(4512154214521);
+
+        $this->assertException($result, 'NotFoundException');
+    }
+
+    /**
+     * Test successful create.
+     *
+     * @return void
+     */
+    public function test_create_successful()
+    {
+        $value = ['random_key' => 'random_value'];
+        $typeId = DataType::where('slug', 'json')->first()->id; // json
+        $data = [
+            'key' => 'random_key',
+            'value' => $value,
+            'type_id' => $typeId,
+            'description' => 'description'
+        ];
+
+        $result = DataHelper::create($data);
+        $newData = Data::orderBy('id', 'desc')->first();
+        $this->assertEquals($result, $newData);
+    }
+
+    /**
+     * Test fail create on duplicate key.
+     *
+     * @return void
+     */
+    public function test_create_key_fail()
+    {
+        $newData = $this->createNewData();
+        $data = [
+            'key' => $newData->key, // same key as before should throw exception
+            'value' => $newData->value,
+            'type_id' => $newData->type_id,
+            'description' => $newData->description
+        ];
+        $this->expectException(CreateFailedException::class);
+        $result = DataHelper::create($data);
+        $this->assertException($result, 'CreateFailedException');
+    }
+
+    /**
+     * Test fail create on value.
+     *
+     * @return void
+     */
+    public function test_create_value_fail()
+    {
+        $this->expectException(CreateFailedException::class);
+
+        $value = null;
+        $typeId = DataType::where('slug', 'json')->first()->id; // json
+        $data = [
+            'key' => 'random_key',
+            'value' => $value,
+            'type_id' => $typeId,
+            'description' => 'description'
+        ];
+
+        $result = DataHelper::create($data);
+
+        $this->assertException($result, 'CreateFailedException');
+    }
+
+    /**
+     * Test fail create on type.
+     *
+     * @return void
+     */
+    public function test_create_type_fail()
+    {
+        $this->expectException(CreateFailedException::class);
+
+        $value = ['random_key' => 'random_value'];
+        $typeId = 441;
+        $data = [
+            'key' => 'random_key',
+            'value' => $value,
+            'type_id' => $typeId,
+            'description' => 'description'
+        ];
+
+        $result = DataHelper::create($data);
+
+        $this->assertException($result, 'CreateFailedException');
     }
 
     /**
