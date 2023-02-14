@@ -40,6 +40,32 @@ class DataHelperTest extends TestCase
     }
 
     /**
+     * Test successful key.
+     *
+     * @return void
+     */
+    public function test_key_successful()
+    {
+        $newData = $this->createNewData();
+        $result = DataHelper::key($newData->key);
+        $this->assertEquals(Data::where('key', $newData->key)->first(), $result);
+    }
+
+    /**
+     * Test fail key.
+     *
+     * @return void
+     */
+    public function test_key_fail()
+    {
+        $this->expectException(NotFoundException::class);
+
+        $result = DataHelper::key(Str::random(7));
+
+        $this->assertException($result, 'NotFoundException');
+    }
+
+    /**
      * Test successful id.
      *
      * @return void

@@ -39,6 +39,21 @@ class DataHelper
     }
 
     /**
+     * get a data object by key
+     * 
+     * @param  string $key
+     * @return Data | NotFoundException
+     */
+    public static function key(string $key)
+    {
+        $data = Data::where('key', $key)->first();;
+        if(!$data) {
+            throw new NotFoundException('Data');
+        }
+        return $data;
+    }
+
+    /**
      * create a new data object
      * 
      * @param  array $data
