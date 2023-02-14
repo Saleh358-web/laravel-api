@@ -5,6 +5,7 @@ namespace  App\Containers\Common\Tests;
 use App\Exceptions\Common\ArgumentNullException;
 use App\Exceptions\Common\CreateFailedException;
 use App\Exceptions\Common\UpdateFailedException;
+use App\Exceptions\Common\DeleteFailedException;
 use App\Exceptions\Common\NotFoundException;
 
 use App\Containers\Common\Helpers\DataHelper;
@@ -249,6 +250,49 @@ class DataHelperTest extends TestCase
         $this->expectException(UpdateFailedException::class);
         $result = DataHelper::update($data, $updatedArray);
         $this->assertException($result, 'UpdateFailedException');
+    }
+
+    /**
+     * Test successful delete.
+     * This tests both delete by id ad delete by key
+     *
+     * @return void
+     */
+    public function test_delete_successful()
+    {
+        $data = $this->createNewData();
+        $result = DataHelper::delete($data->id);
+        $this->assertEquals($result, true);
+
+        $data = $this->createNewData();
+        $result = DataHelper::deleteByKey($data->key);
+        $this->assertEquals($result, true);
+    }
+
+    /**
+     * Test fail delete by id.
+     *
+     * @return void
+     */
+    public function test_delete_id_fail()
+    {
+        $id = 8454653456132;
+        $this->expectException(DeleteFailedException::class);
+        $result = DataHelper::delete($id);
+        $this->assertException($result, 'DeleteFailedException');
+    }
+
+    /**
+     * Test fail delete by key.
+     *
+     * @return void
+     */
+    public function test_delete_key_fail()
+    {
+        $key = Str::random(5);
+        $this->expectException(DeleteFailedException::class);
+        $result = DataHelper::deleteByKey($key);
+        $this->assertException($result, 'DeleteFailedException');
     }
 
     /**

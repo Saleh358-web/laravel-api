@@ -5,6 +5,7 @@ namespace App\Containers\Common\Helpers;
 use App\Exceptions\Common\ArgumentNullException;
 use App\Exceptions\Common\CreateFailedException;
 use App\Exceptions\Common\UpdateFailedException;
+use App\Exceptions\Common\DeleteFailedException;
 use App\Exceptions\Common\NotFoundException;
 use Exception;
 
@@ -118,6 +119,62 @@ class DataHelper
 
         Log::error('Update data failed - DataHelper::update');
         throw new  UpdateFailedException($messages['DATA']['EXCEPTION']);
+    }
+
+    /**
+     * delete a data object by id
+     * 
+     * @param  int $data
+     * @return Boolean | DeleteFailedException
+     */
+    public static function delete(int $id)
+    {
+        $messages = self::getMessages();
+
+        DB::beginTransaction();
+        try {
+            $data = self::id($id);
+            $data->delete();
+            DB::commit();
+
+            Log::info('Data deleted successfully');
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Delete data failed - DataHelper::delete');
+            throw new  DeleteFailedException($messages['DATA']['EXCEPTION']);
+        }
+
+        Log::error('Delete data failed - DataHelper::delete');
+        throw new  DeleteFailedException($messages['DATA']['EXCEPTION']);
+    }
+
+    /**
+     * delete a data object by key
+     * 
+     * @param  string $key
+     * @return Boolean | DeleteFailedException
+     */
+    public static function deleteByKey(string $key)
+    {
+        $messages = self::getMessages();
+
+        DB::beginTransaction();
+        try {
+            $data = self::key($key);
+            $data->delete();
+            DB::commit();
+
+            Log::info('Data deleted successfully');
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Delete data failed - DataHelper::deleteByKey');
+            throw new  DeleteFailedException($messages['DATA']['EXCEPTION']);
+        }
+
+        Log::error('Delete data failed - DataHelper::deleteByKey');
+        throw new  DeleteFailedException($messages['DATA']['EXCEPTION']);
     }
 
     /**
