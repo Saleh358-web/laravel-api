@@ -4,6 +4,7 @@ namespace  App\Containers\Common\Tests;
 
 use App\Exceptions\Common\ArgumentNullException;
 use App\Exceptions\Common\CreateFailedException;
+use App\Exceptions\Common\UpdateFailedException;
 use App\Exceptions\Common\NotFoundException;
 
 use App\Containers\Common\Helpers\DataHelper;
@@ -25,7 +26,7 @@ class DataHelperTest extends TestCase
         $this->withoutExceptionHandling();
     }
 
-    private function createNewData()
+    private function getDataArray(): array
     {
         $value = [Str::random(5) => Str::random(5)];
         $typeId = DataType::where('slug', 'json')->first()->id; // json
@@ -35,6 +36,12 @@ class DataHelperTest extends TestCase
             'type_id' => $typeId,
             'description' => Str::random(10)
         ];
+        return $data;
+    }
+
+    private function createNewData()
+    {
+        $data = $this->getDataArray();
         $newData = DataHelper::create($data);
         return $newData;
     }
@@ -175,6 +182,73 @@ class DataHelperTest extends TestCase
         $result = DataHelper::create($data);
 
         $this->assertException($result, 'CreateFailedException');
+    }
+
+    /**
+     * Test successful update.
+     *
+     * @return void
+     */
+    public function test_update_successful()
+    {
+        $data = $this->createNewData();
+        $updatedArray = $this->getDataArray();
+
+        $result = DataHelper::update($data, $updatedArray);
+        $this->assertEquals($result, DataHelper::id($data->id));
+    }
+
+    /**
+     * Test fail update on duplicate key.
+     *
+     * @return void
+     */
+    public function test_update_key_fail()
+    {
+        $oldData = $this->createNewData();
+
+        $data = $this->createNewData();
+        $updatedArray = $this->getDataArray();
+        
+        $updatedArray['key'] = $oldData->key;
+
+        $this->expectException(UpdateFailedException::class);
+        $result = DataHelper::update($data, $updatedArray);
+        $this->assertException($result, 'UpdateFailedException');
+    }
+
+    /**
+     * Test fail update on invalid type.
+     *
+     * @return void
+     */
+    public function test_update_type_fail()
+    {
+        $data = $this->createNewData();
+        $updatedArray = $this->getDataArray();
+        
+        $updatedArray['type_id'] = 84653486532;
+
+        $this->expectException(UpdateFailedException::class);
+        $result = DataHelper::update($data, $updatedArray);
+        $this->assertException($result, 'UpdateFailedException');
+    }
+
+    /**
+     * Test fail update on invalid value.
+     *
+     * @return void
+     */
+    public function test_update_value_fail()
+    {
+        $data = $this->createNewData();
+        $updatedArray = $this->getDataArray();
+        
+        $updatedArray['value'] = null;
+
+        $this->expectException(UpdateFailedException::class);
+        $result = DataHelper::update($data, $updatedArray);
+        $this->assertException($result, 'UpdateFailedException');
     }
 
     /**

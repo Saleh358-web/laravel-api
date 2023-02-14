@@ -4,13 +4,17 @@ namespace App\Containers\Common\Helpers;
 
 use App\Exceptions\Common\ArgumentNullException;
 use App\Exceptions\Common\CreateFailedException;
+use App\Exceptions\Common\UpdateFailedException;
 use App\Exceptions\Common\NotFoundException;
+use Exception;
+
 use App\Containers\Common\Messages\Messages;
+
 use App\Containers\Common\Models\DataType;
 use App\Containers\Common\Models\Data;
-use Illuminate\Support\Facades\Log;
+
 use Illuminate\Support\Facades\DB;
-use Exception;
+use Illuminate\Support\Facades\Log;
 
 class DataHelper
 {
@@ -79,6 +83,41 @@ class DataHelper
 
         Log::error('Create data failed - DataHelper::create');
         throw new  CreateFailedException($messages['DATA']['EXCEPTION']);
+    }
+
+    /**
+     * update a data object
+     * 
+     * @param Data $updateData
+     * @param  array $data
+     * @return Data | UpdateFailedException
+     */
+    public static function update(Data $updateData, array $data)
+    {
+        $messages = self::getMessages();
+
+        DB::beginTransaction();
+        try {
+            $data['value'] = self::stringifyValue($data['value'], $data['type_id']);
+
+            $updateData->key = $data['key'];
+            $updateData->type_id = $data['type_id'];
+            $updateData->value = $data['value'];
+            $updateData->description = $data['description'];
+            $updateData->save();
+
+            DB::commit();
+
+            Log::info('Data updated successfully');
+            return self::id($updateData->id);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Update data failed - DataHelper::update');
+            throw new  UpdateFailedException($messages['DATA']['EXCEPTION']);
+        }
+
+        Log::error('Update data failed - DataHelper::update');
+        throw new  UpdateFailedException($messages['DATA']['EXCEPTION']);
     }
 
     /**
