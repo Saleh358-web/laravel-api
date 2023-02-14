@@ -15,8 +15,8 @@ trait TestDatabaseTrait
     public function manageDatabase(): void
     {
         Artisan::call('config:clear');
-        // Artisan::call('migrate:fresh --seed');
-        // Artisan::call('passport:install');
+        Artisan::call('migrate:fresh --seed');
+        Artisan::call('passport:install');
         Artisan::call('config:clear');
     }
 }

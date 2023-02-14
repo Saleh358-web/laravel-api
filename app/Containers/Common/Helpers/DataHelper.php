@@ -52,32 +52,21 @@ class DataHelper
     }
 
     /**
-     * Formats the value of the data and returns it
+     * Formats the value of the data to the manageable form
+     * so it converts string values to corresponding php result
+     * and returns it
      * 
      * @param  Data $data
      * @return $value
      */
     public static function getValue(Data $data)
     {
-        $output = null;
-        $type = $data->type()->get()->first();
-
-        switch($type->slug) {
-            case 'json': {
-                if(gettype($value) != 'string') {
-                    $output = json_decode($value, true);
-                } else {
-                    $output = $value;
-                }
-                break;
-            }
-            default: {
-                $output = $data->value;
-                break;
-            }
+        try {
+            $output = self::formatValue($data->value, $data->type_id);
+            return $output;
+        } catch (Exception $e) {
+            throw $e;
         }
-
-        return $output;
     }
     
     /**
@@ -105,7 +94,7 @@ class DataHelper
 
             switch($type->slug) {
                 case 'json': {
-                    $currentType == 'string' ? $output = json_decode($value) : $output = $value;
+                    $currentType == 'string' ? $output = json_decode($value, true) : $output = $value;
                     break;
                 }
                 case 'bool': {

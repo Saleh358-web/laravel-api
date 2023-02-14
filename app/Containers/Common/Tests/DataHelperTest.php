@@ -8,6 +8,8 @@ use App\Exceptions\Common\NotFoundException;
 
 use App\Containers\Common\Helpers\DataHelper;
 use App\Containers\Common\Models\DataType;
+use App\Containers\Common\Models\Data;
+
 use App\Helpers\Tests\TestsFacilitator;
 use Tests\TestCase;
 
@@ -19,6 +21,76 @@ class DataHelperTest extends TestCase
     {
         parent::setUp();
         $this->withoutExceptionHandling();
+    }
+
+    /**
+     * Test successful getValue.
+     *
+     * @return void
+     */
+    public function test_getValue_successful()
+    {
+        // case json
+        $value = ['random_key' => 'random_value'];
+        $typeId = DataType::where('slug', 'json')->first()->id; // json
+        $data = $this->formatData($value, $typeId);
+        $result = DataHelper::getValue($data);
+        $this->assertEquals($value, $result);
+
+        // case boolean
+        $value = true;
+        $typeId = DataType::where('slug', 'bool')->first()->id; // boolean
+        $data = $this->formatData($value, $typeId);
+        $result = DataHelper::getValue($data);
+        $this->assertEquals($value, $result);
+
+        // case number
+        $value = 5632;
+        $typeId = DataType::where('slug', 'number')->first()->id; // number
+        $data = $this->formatData($value, $typeId);
+        $result = DataHelper::getValue($data);
+        $this->assertEquals($value, $result);
+    }
+
+    private function formatData($value, $typeId)
+    {
+        $data = new Data();
+        $data->value = $value;
+        $data->type_id = $typeId;
+        $data->value = DataHelper::stringifyValue($data->value, $typeId);
+        return $data;
+    }
+    
+    /**
+     * Test fail getValue on type.
+     *
+     * @return void
+     */
+    public function test_getValue_type_fail()
+    {
+        $this->expectException(NotFoundException::class);
+
+        $value = ['random_key' => 'random_value'];
+        $typeId = 4512;
+        $data = $this->formatData($value, $typeId);
+
+        $this->assertException($result, 'NotFoundException');
+    }
+
+    /**
+     * Test fail getValue on value.
+     *
+     * @return void
+     */
+    public function test_getValue_value_fail()
+    {
+        $this->expectException(ArgumentNullException::class);
+
+        $value = null;
+        $typeId = 1;
+        $data = $this->formatData($value, $typeId);
+
+        $this->assertException($result, 'ArgumentNullException');
     }
 
     /**
