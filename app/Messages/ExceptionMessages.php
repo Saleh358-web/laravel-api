@@ -13,7 +13,8 @@ trait ExceptionMessages
             'UPDATE_FAILED' => 'update failed',
             'DELETE_FAILED' => 'delete failed',
             'FILE_SAVE_FAILED' => 'save failed',
-            'FILE_GET_FAILED' => 'get failed'
+            'FILE_GET_FAILED' => 'get failed',
+            'ARGUMENT_NULL' => 'can\'t be null'
         ];
     }
 }

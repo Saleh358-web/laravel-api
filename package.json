@@ -7,7 +7,12 @@
         "watch-poll": "mix watch -- --watch-options-poll=1000",
         "hot": "mix watch --hot",
         "prod": "npm run production",
-        "production": "mix --production"
+        "production": "mix --production",
+        "migrate": "php artisan migrate:fresh --seed",
+        "passport": "php artisan passport:install",
+        "cache": "php artisan config:cache && php artisan cache:clear && php artisan config:clear && composer dump-autoload",
+        "restart": "npm run migrate && npm run passport && npm run cache",
+        "test": "php artisan test"
     },
     "devDependencies": {
         "axios": "^0.25",

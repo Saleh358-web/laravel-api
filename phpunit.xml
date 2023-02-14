@@ -17,6 +17,9 @@
         <testsuite name="Feature">
             <directory suffix="Test.php">./app/Containers/Auth/Tests</directory>
         </testsuite>
+        <testsuite name="Feature">
+            <directory suffix="Test.php">./app/Containers/Common/Tests</directory>
+        </testsuite>
     </testsuites>
     <coverage processUncoveredFiles="true">
         <include>

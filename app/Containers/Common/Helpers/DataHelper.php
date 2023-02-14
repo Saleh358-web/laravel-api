@@ -2,6 +2,7 @@
 
 namespace App\Containers\Common\Helpers;
 
+use App\Exceptions\Common\ArgumentNullException;
 use App\Exceptions\Common\CreateFailedException;
 use App\Exceptions\Common\NotFoundException;
 use App\Containers\Users\Messages\Messages;
@@ -84,7 +85,7 @@ class DataHelper
      * its type
      * 
      * so a string value with boolean type will be converted to be boolean
-     * ...
+     * etc, ...
      * 
      * @param $value
      * @return $output
@@ -93,12 +94,13 @@ class DataHelper
     {
         $output = null;
         $type = DataType::find($typeId);
-
-        if(!$type) {
-            throw new NotFoundException('Data Type not found');
-        }
-
         try {
+            if(!$type) {
+                throw new NotFoundException('Data Type');
+            }
+            if(!$value) {
+                throw new ArgumentNullException('Value');
+            }
             $currentType = gettype($value);
 
             switch($type->slug) {
@@ -131,27 +133,6 @@ class DataHelper
     }
 
     /**
-     * Formats the value of the data to be a string
-     * then returns it back
-     * 
-     * The value must be a string representing the type
-     * so and integer as a string or any number as a string
-     * or a json encoded string
-     * 
-     * @param Data $data
-     * @return Data $data
-     */
-    public static function formatDataValue(Data $data)
-    {
-        try {
-            $data->value = self::stringifyValue($data->value, $data->type_id);
-            return $data;
-        } catch (Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
      * Gets the value and the type of the value
      * converts it to string and returns it back
      * 
@@ -163,11 +144,13 @@ class DataHelper
     {
         $output = null;
         $type = DataType::find($typeId);
-
-        if(!$type) {
-            throw new NotFoundException('Data Type not found');
-        }
         try {
+            if(!$type) {
+                throw new NotFoundException('Data Type');
+            }
+            if(!$value) {
+                throw new ArgumentNullException('Value');
+            }
             switch($type->slug) {
                 case 'json': {
                     if(gettype($value) == 'string') {
@@ -178,7 +161,7 @@ class DataHelper
                     break;
                 }
                 default: {
-                    $output = (string)$data->value;
+                    $output = (string)$value;
                     break;
                 }
             }
