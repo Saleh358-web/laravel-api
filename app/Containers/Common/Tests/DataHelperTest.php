@@ -296,6 +296,51 @@ class DataHelperTest extends TestCase
     }
 
     /**
+     * Test successful restore.
+     * This tests both restore by id ad restore by key
+     *
+     * @return void
+     */
+    public function test_restore_successful()
+    {
+        $data = $this->createNewData();
+        DataHelper::delete($data->id);
+        $result = DataHelper::restore($data->id);
+        $this->assertEquals(DataHelper::id($data->id), $result);
+
+        $data = $this->createNewData();
+        DataHelper::deleteByKey($data->key);
+        $result = DataHelper::restoreByKey($data->key);
+        $this->assertEquals(DataHelper::key($data->key), $result);
+    }
+
+    /**
+     * Test fail restore.
+     * This tests restore by id 
+     *
+     * @return void
+     */
+    public function test_restore_fail_by_id()
+    {
+        $this->expectException(UpdateFailedException::class);
+        $result = DataHelper::restore(563465321);
+        $this->assertException($result, 'UpdateFailedException');
+    }
+
+    /**
+     * Test fail restore.
+     * This tests restore by key 
+     *
+     * @return void
+     */
+    public function test_restore_fail_by_key()
+    {
+        $this->expectException(UpdateFailedException::class);
+        $result = DataHelper::restoreByKey(Str::random(5));
+        $this->assertException($result, 'UpdateFailedException');
+    }
+
+    /**
      * Test successful getValue.
      *
      * @return void

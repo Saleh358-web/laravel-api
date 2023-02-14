@@ -178,6 +178,70 @@ class DataHelper
     }
 
     /**
+     * restore a data object by id
+     * 
+     * @param  int $id
+     * @return Data | UpdateFailedException
+     */
+    public static function restore(int $id)
+    {
+        $messages = self::getMessages();
+
+        DB::beginTransaction();
+        try {
+            $data = Data::onlyTrashed()->where('id', $id)->first();
+            if(!$data) {
+                throw new NotFoundException($messages['DATA']['EXCEPTION']);
+            }
+
+            $data->restore();
+            DB::commit();
+
+            Log::info('Data restored successfully');
+            return self::id($id);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Restore data failed - DataHelper::restore');
+            throw new  UpdateFailedException($messages['DATA']['EXCEPTION']);
+        }
+
+        Log::error('Restore data failed - DataHelper::restore');
+        throw new  UpdateFailedException($messages['DATA']['EXCEPTION']);
+    }
+
+    /**
+     * restore a data object by key
+     * 
+     * @param  string $key
+     * @return Boolean | UpdateFailedException
+     */
+    public static function restoreByKey(string $key)
+    {
+        $messages = self::getMessages();
+
+        DB::beginTransaction();
+        try {
+            $data = Data::onlyTrashed()->where('key', $key)->first();
+            if(!$data) {
+                throw new NotFoundException($messages['DATA']['EXCEPTION']);
+            }
+            
+            $data->restore();
+            DB::commit();
+
+            Log::info('Data restored successfully');
+            return self::key($key);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Restore data failed - DataHelper::restoreByKey');
+            throw new  UpdateFailedException($messages['DATA']['EXCEPTION']);
+        }
+
+        Log::error('Restore data failed - DataHelper::restoreByKey');
+        throw new  UpdateFailedException($messages['DATA']['EXCEPTION']);
+    }
+
+    /**
      * Formats the value of the data to the manageable form
      * so it converts string values to corresponding php result
      * and returns it
