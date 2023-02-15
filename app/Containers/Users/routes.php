@@ -29,6 +29,7 @@ Route::group([
     {
         // Users
         Route::get('/', [UsersController::class, 'get'])->name('users.get');
+        Route::post('/', [UsersController::class, 'create'])->name('users.create');
 
         // Add / Remove permissions to user
         Route::put('addPermissionsToUser', [UsersController::class, 'addPermissionsToUser'])

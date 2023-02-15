@@ -44,6 +44,9 @@ trait Messages
                 'DELETE_USER_NOT_ALLOWED' => 'This user is not allowed to delete users',
                 'DELETE_SUCCESSFUL' => 'Delete was successful',
                 'DELETE_ERROR' => 'Delete failed',
+                'CREATE_USER_NOT_ALLOWED' => 'This user is not allowed to create users',
+                'CREATE_USER_SUCCESS' => 'User created successfully',
+                'CREATE_USER_FAILED' => 'User create failed'
             ],
             'EMAIL_EXISTS' => 'Email already exists'
         ];

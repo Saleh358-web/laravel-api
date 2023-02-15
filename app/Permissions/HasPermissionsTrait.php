@@ -2,6 +2,8 @@
 
 namespace App\Permissions;
 
+use App\Helpers\Database\PermissionsHelper;
+
 use App\Models\Permission;
 use App\Models\Role;
 
@@ -48,12 +50,17 @@ trait HasPermissionsTrait
 
     public function allowedTo(string $permissionsString)
     {
+        // add the permissions to permissions table if not added
+        $permissions = explode('/', $permissionsString);
+        foreach ($permissions as $permission) {
+            PermissionsHelper::addBySlug($permission);
+        }
+
         /* Super admins are allowed all permissions and full access */
         if ($this->roles->contains('slug', 'super-admin')) {
             return true;
         }
 
-        $permissions = explode('/', $permissionsString);
         foreach ($permissions as $permission) {
             if ($this->permissions->contains('slug', $permission)) {
                 return true;

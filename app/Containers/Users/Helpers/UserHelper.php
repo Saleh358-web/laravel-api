@@ -2,31 +2,40 @@
 
 namespace App\Containers\Users\Helpers;
 
-use Auth;
-use App\Models\Role;
-use App\Models\Permission;
-use App\Models\User;
-use App\Models\Image;
+
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
-use App\Helpers\ConstantsHelper;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+
+use App\Helpers\ConstantsHelper;
+
+use App\Helpers\Response\CollectionsHelper;
+use App\Helpers\Storage\StoreHelper;
+use App\Helpers\Storage\LocalStore;
+
 use App\Exceptions\Common\NotFoundException;
 use App\Exceptions\Common\DeleteFailedException;
 use App\Exceptions\Common\CreateFailedException;
 use App\Exceptions\Common\UpdateFailedException;
 use App\Exceptions\Common\NotAllowedException;
+use Exception;
+
+use App\Containers\Users\Exceptions\UpdatePasswordFailedException;
+use App\Containers\Users\Exceptions\SameOldPasswordException;
 use App\Containers\Users\Exceptions\DuplicateEmailException;
 use App\Containers\Users\Exceptions\OldPasswordException;
-use App\Containers\Users\Exceptions\SameOldPasswordException;
-use App\Containers\Users\Exceptions\UpdatePasswordFailedException;
-use App\Containers\Users\Messages\Messages;
-use App\Containers\Auth\Helpers\UserTokenHelper;
 use App\Containers\Users\Helpers\UserRolesHelper;
-use App\Helpers\Storage\StoreHelper;
-use App\Helpers\Storage\LocalStore;
-use App\Helpers\Response\CollectionsHelper;
-use Exception;
+use App\Containers\Auth\Helpers\UserTokenHelper;
+use App\Containers\Users\Messages\Messages;
+
+use App\Models\Permission;
+use App\Models\Image;
+use App\Models\Role;
+use App\Models\User;
+
+use Carbon\Carbon;
+
+use Auth;
 
 class UserHelper
 {
@@ -289,19 +298,16 @@ class UserHelper
         try {
             $messages = self::getMessages();
             $data = UserHelper::trimUserData($data);
+            $data['password'] = Hash::make($data['password']);
+            if(isset($data['dob']) && $data['dob'] != '') {
+                $data['dob'] = new Carbon($data['dob']);
+            }
 
-            $user = User::create([
-                'first_name' => $data['first_name'],
-                'last_name' => $data['last_name'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password'])
-            ]);
-
+            $user = User::create($data);
             DB::commit();
 
             Log::info('User created successfully');
-            
-            return $user;
+            return self::id($user->id);
         } catch (Exception $e) {
             Log::error('User create failed on UserHelper::create() with data: ' . json_encode($data));
             DB::rollback();

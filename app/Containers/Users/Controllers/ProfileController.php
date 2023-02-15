@@ -4,14 +4,18 @@ namespace App\Containers\Users\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Containers\Users\Messages\Messages;
+
 use App\Helpers\Response\ResponseHelper;
-use App\Containers\Users\Helpers\UserHelper;
 use App\Helpers\Storage\StoreHelper;
+
 use App\Containers\Auth\Helpers\UserAuthHelper;
-use App\Containers\Users\Requests\UpdateUserRequest;
+
 use App\Containers\Users\Requests\UpdateUserPasswordRequest;
 use App\Containers\Users\Requests\UpdateUserPhotoRequest;
+use App\Containers\Users\Requests\UpdateUserRequest;
+use App\Containers\Users\Helpers\UserHelper;
+use App\Containers\Users\Messages\Messages;
+
 use Exception;
 use Auth;
 

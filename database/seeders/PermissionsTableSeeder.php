@@ -8,8 +8,6 @@ use App\Helpers\Database\PermissionsHelper;
 
 class PermissionsTableSeeder extends Seeder
 {
-    use PermissionsHelper;
-
     /**
      * Run the database seeds.
      *
@@ -17,6 +15,6 @@ class PermissionsTableSeeder extends Seeder
      */
     public function run()
     {
-        $this->addPermissions();
+        PermissionsHelper::addPermissions();
     }
 }

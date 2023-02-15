@@ -4,7 +4,7 @@ namespace App\Containers\Users\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateUserRequest extends FormRequest
+class CreateUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -32,7 +32,8 @@ class UpdateUserRequest extends FormRequest
                 'min:6',
                 'regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#@-_%]).*$/',
                 'confirmed'
-            ]
+            ],
+            'dob' => 'nullable|date',
         ];
     }
 }

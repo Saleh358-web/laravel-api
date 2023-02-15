@@ -2,10 +2,12 @@
 
 namespace App\Containers\Users\Helpers;
 
-use App\Models\User;
 use App\Containers\Users\Helpers\UserRolesHelper;
 use App\Containers\Users\Helpers\UserHelper;
+
 use App\Exceptions\Common\NotFoundException;
+
+use App\Models\User;
 
 class CrossAuthorizationHelper
 {

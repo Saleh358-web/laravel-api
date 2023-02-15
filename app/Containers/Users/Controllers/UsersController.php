@@ -4,20 +4,24 @@ namespace App\Containers\Users\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Containers\Users\Requests\UserArraysRequest;
-use App\Containers\Users\Messages\Messages;
+
+use App\Helpers\Database\PermissionsHelper;
 use App\Helpers\Response\ResponseHelper;
-use App\Containers\Users\Helpers\UserHelper;
+use App\Requests\PaginationRequest;
+
 use App\Containers\Users\Helpers\CrossAuthorizationHelper;
 use App\Containers\Users\Validators\UsersValidators;
-use App\Helpers\Database\PermissionsHelper;
-use App\Requests\PaginationRequest;
+use App\Containers\Users\Requests\UserArraysRequest;
+use App\Containers\Users\Requests\CreateUserRequest;
+use App\Containers\Users\Messages\Messages;
+use App\Containers\Users\Helpers\UserHelper;
+
 use Exception;
 use Auth;
 
 class UsersController extends Controller
 {
-    use ResponseHelper, Messages, PermissionsHelper, UsersValidators;
+    use ResponseHelper, Messages, UsersValidators;
 
     protected $messages = array();
 
@@ -68,6 +72,45 @@ class UsersController extends Controller
             $this->bad_request,
             [],
             $this->messages['USERS']['GET_ERROR']
+        );
+    }
+
+    /**
+     * Create a new user
+     * 
+     * @param CreateUserRequest $request
+     * @return \Illuminate\Http\Response
+     */
+    public function create(CreateUserRequest $request)
+    {
+        $this->messages = $this->messages();
+
+        if (!Auth::user()->allowedTo('create-users')) {
+            return $this->return_response($this->not_allowed, [], $this->messages['USERS']['CREATE_USER_NOT_ALLOWED']);
+        }
+
+        try {
+            $data = $request->all();
+            $user = UserHelper::create($data);
+
+            return $this->return_response(
+                $this->success,
+                ['user' => $user],
+                $this->messages['USERS']['CREATE_USER_SUCCESS']
+            );
+        } catch (Exception $e) {
+            return $this->return_response(
+                $this->bad_request,
+                [],
+                $this->messages['USERS']['CREATE_USER_FAILED'],
+                $this->exception_message($e)
+            );
+        }
+
+        return $this->return_response(
+            $this->bad_request,
+            [],
+            $this->messages['USERS']['CREATE_USER_FAILED']
         );
     }
 
