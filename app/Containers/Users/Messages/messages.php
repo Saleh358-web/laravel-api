@@ -25,6 +25,8 @@ trait Messages
             'USERS' => [
                 'GET' => 'Users found',
                 'GET_ERROR' => 'Unable to get users',
+                'GET_ID' => 'User found',
+                'GET_ID_ERROR' => 'Unable to get user',
                 'ATTACH_PERMISSIONS' => 'Permissions added successfully',
                 'ATTACH_PERMISSIONS_FAILED' => 'Attach permissions failed',
                 'ATTACH_PERMISSIONS_NOT_ALLOWED' => 'This user is not allowed to attach/detach permissions',
@@ -46,7 +48,10 @@ trait Messages
                 'DELETE_ERROR' => 'Delete failed',
                 'CREATE_USER_NOT_ALLOWED' => 'This user is not allowed to create users',
                 'CREATE_USER_SUCCESS' => 'User created successfully',
-                'CREATE_USER_FAILED' => 'User create failed'
+                'CREATE_USER_FAILED' => 'User create failed',
+                'UPDATE_USER_NOT_ALLOWED' => 'User not allowed to update users',
+                'UPDATE_USER_SUCCESS' => 'User updated successfully',
+                'UPDATE_USER_FAILED' => 'User update failed',
             ],
             'EMAIL_EXISTS' => 'Email already exists'
         ];

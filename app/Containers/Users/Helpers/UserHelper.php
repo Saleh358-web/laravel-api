@@ -129,6 +129,35 @@ class UserHelper
     }
 
     /**
+     * get user full info by id
+     * 
+     * @param int $id
+     * @return User $user
+     */
+    public static function full(int $id)
+    {
+        try {
+            $messages = self::getMessages();
+            $user = User::with(['roles', 'permissions', 'profileImage'])->where('id', $id)->first();
+
+            if(!$user) {
+                throw new NotFoundException($messages['PROFILE']['EXCEPTION']);
+            }
+
+            if($user->profileImage) {
+                $user->profileImage->link = StoreHelper::getFileLink($user->profileImage->link);
+            }
+
+            return $user;
+        } catch (Exception $e) {
+            Log::error('User not found - UserHelper::id(' . $id . ')');
+            throw new NotFoundException($messages['PROFILE']['EXCEPTION']);
+        }
+
+        throw new NotFoundException($messages['PROFILE']['EXCEPTION']);
+    }
+
+    /**
      * This function set the active filed for a user profile to false
      * which will prevent him from exercising login an all his activities
      * on this api
@@ -331,7 +360,9 @@ class UserHelper
         try {
             $messages = self::getMessages();
             $data = UserHelper::trimUserData($data);
-
+            if(isset($data['dob']) && $data['dob'] != '') {
+                $data['dob'] = new Carbon($data['dob']);
+            }
             $user->first_name = $data['first_name'];
             $user->last_name = $data['last_name'];
 
@@ -346,12 +377,9 @@ class UserHelper
             }
 
             $user->save();
-
             DB::commit();
-
             Log::info('User data updated successfully');
-            
-            $user = User::find($user->id);
+            $user = self::id($user->id);
             return $user;
         } catch (Exception $e) {
             Log::error('User data updated failed - UserHelper::update()');

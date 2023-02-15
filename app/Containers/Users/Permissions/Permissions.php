@@ -18,6 +18,11 @@ class Permissions
                 'description' => 'Create a new user with full data'
             ],
             [
+                'name' => 'Update Users',
+                'slug' => 'update-users',
+                'description' => 'Update users with full data'
+            ],
+            [
                 'name' => 'Attach Permissions',
                 'slug' => 'attach-permissions',
                 'description' => 'Add and remove permissions for user'

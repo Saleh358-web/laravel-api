@@ -13,6 +13,7 @@ use App\Containers\Users\Helpers\CrossAuthorizationHelper;
 use App\Containers\Users\Validators\UsersValidators;
 use App\Containers\Users\Requests\UserArraysRequest;
 use App\Containers\Users\Requests\CreateUserRequest;
+use App\Containers\Users\Requests\UpdateUserRequest;
 use App\Containers\Users\Messages\Messages;
 use App\Containers\Users\Helpers\UserHelper;
 
@@ -76,6 +77,50 @@ class UsersController extends Controller
     }
 
     /**
+     * Get User By Id
+     * 
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function id(int $id)
+    {
+        if (!Auth::user()->allowedTo('get-users')) {
+            return $this->return_response(
+                $this->not_allowed,
+                [],
+                $this->messages['USERS']['GET_ID_ERROR']
+            );
+        }
+
+        try {
+            $user = UserHelper::full($id);
+            
+            $info = [
+                'user' => $user,
+            ];
+
+            return $this->return_response(
+                $this->success,
+                $info,
+                $this->messages['USERS']['GET_ID']
+            );
+        } catch (Exception $e) {
+            return $this->return_response(
+                $this->bad_request,
+                [],
+                $this->messages['USERS']['GET_ID_ERROR'],
+                $this->exception_message($e)
+            );
+        }
+
+        return $this->return_response(
+            $this->bad_request,
+            [],
+            $this->messages['USERS']['GET_ID_ERROR']
+        );
+    }
+
+    /**
      * Create a new user
      * 
      * @param CreateUserRequest $request
@@ -111,6 +156,48 @@ class UsersController extends Controller
             $this->bad_request,
             [],
             $this->messages['USERS']['CREATE_USER_FAILED']
+        );
+    }
+
+    /**
+     * Update a user
+     * 
+     * @param UpdateUserRequest $request
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(UpdateUserRequest $request, int $id)
+    {
+        $this->messages = $this->messages();
+
+        if (!Auth::user()->allowedTo('update-users')) {
+            return $this->return_response($this->not_allowed, [], $this->messages['USERS']['UPDATE_USER_NOT_ALLOWED']);
+        }
+
+        try {
+            $data = $request->all();
+
+            $user = UserHelper::id($id);
+            $user = UserHelper::update($user, $data);
+
+            return $this->return_response(
+                $this->success,
+                ['user' => $user],
+                $this->messages['USERS']['UPDATE_USER_SUCCESS']
+            );
+        } catch (Exception $e) {
+            return $this->return_response(
+                $this->bad_request,
+                [],
+                $this->messages['USERS']['UPDATE_USER_FAILED'],
+                $this->exception_message($e)
+            );
+        }
+
+        return $this->return_response(
+            $this->bad_request,
+            [],
+            $this->messages['USERS']['UPDATE_USER_FAILED']
         );
     }
 

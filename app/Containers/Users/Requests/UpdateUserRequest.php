@@ -27,6 +27,7 @@ class UpdateUserRequest extends FormRequest
             'first_name' => 'required|string|min:2',
             'last_name' => 'required|string|min:2',
             'email' => 'required|string|min:4|email',
+            'dob' => 'nullable|date',
         ];
     }
 }
